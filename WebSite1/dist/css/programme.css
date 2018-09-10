@@ -1,0 +1,14 @@
+﻿@font-face {
+    font-family: 'programme_bold';
+    src: url('../fonts/programme_bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'programme_light';
+    src: url('../fonts/programme_light.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'programme_normal';
+    src: url('../fonts/programme_normal.ttf') format('truetype');
+}
