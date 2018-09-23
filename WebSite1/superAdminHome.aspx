@@ -686,8 +686,8 @@ desired effect
                 icon: "fa fa-list",
                 type: "red",
                 columnClass: "xlarge",
-                content: "<div class='row pad' style='width: 100%; background: #ECF0F5'>" +
-                    "<div class='col-xs-6'>" +
+                content: "<div class='row pad' style='width: 100%; background: #ECF0F5;display: table;'>" +
+                    "<div class='col-xs-6' style='float: none;display: table-cell;vertical-align: top;'>" +
                     "<div class='form-group'>" +
                     "<input class='form-control' placeholder='Advice Name' id='addAdviceName'/>" +
                     "</div>" +
@@ -711,7 +711,7 @@ desired effect
                     "<div class='box-header with-border' style='padding: 0px'>" +
                     "<div class='input-group' id='trigGPA'>" +
                     "<span class='input-group-addon'><input type='checkbox'/></span>" +
-                    "<b><input class='form-control' type='text' disabled value='GPA'/></b>" +
+                    "<b><input class='form-control' type='text' disabled value='GPA (Overall)'/></b>" +
                     "</div>" +
                     "</div>" +
                     "<div class='box-body'>" +
@@ -725,7 +725,7 @@ desired effect
                     "<div class='box-header with-border' style='padding: 0px'>" +
                     "<div class='input-group' id='trigSubjFailed'>" +
                     "<span class='input-group-addon'><input type='checkbox'/></span>" +
-                    "<b><input class='form-control' type='text' disabled value='Subjects Failed Percentage'/></b>" +
+                    "<b><input class='form-control' type='text' disabled value='Subjects Failed Percentage (effective only on last semester)'/></b>" +
                     "</div>" +
                     "</div>" +
                     "<div class='box-body'>" +
@@ -736,10 +736,10 @@ desired effect
                     "</div>" +
                     "</div>" +
                     "</div>" +
-                    "<div class='col-xs-6'>" +
-                    "<div><div class='pad' style='height: 200px; background: white'><ul id='listStep' class='list-unstyled'></ul></div></div><button class='btn btn-success pull-right margin' id='addStep'>Add Step</button>" +
+                    "<div class='col-xs-6' style='float: none;display: table-cell;vertical-align: top;'>" +
+                    "<div class='text-center text-muted pad'style='background: white; width: 100%;height: 400px;'><div><br><br><br><br><i class='fa fa-file-o fa-5x'></i><br><br>No Steps Added</div><ul id='listStep' class='list-unstyled'></ul></div>" +
                     "</div>" +
-                    "</div>",
+                    "</div><button class='btn btn-success pull-right margin' id='addStep'>Add Step</button>",
                 onOpenBefore: function () {
                     //INITIALIZED SLIDERS AND PUT THE VALUES TO A VARIABLE
                     var subjFailed = this.$content.find(".slider.subjFailed").slider().on("slide", subjFailedSlide).data("slider");
@@ -769,8 +769,8 @@ desired effect
                     document.getElementById("addStep").onclick = function () {
                         var step = document.createElement("li");
                         step.style.cursor = 'pointer';
-                        step.innerHTML = "<div class='input-group'><span class='input-group-addon stepOrder'>1</span><textarea class='form-control stepsTextArea' rows='1' onkeyup='auto_grow(this)' style='resize: none'></textarea><span class='input-group-addon' onclick='removeStep(this)'><i class='fa fa-remove'></i></span></div>";
-                        document.getElementById("listStep").parentNode.style.height = "";
+                        step.innerHTML = "<div class='input-group'><span class='input-group-addon stepOrder'>1</span><textarea class='form-control stepsTextArea' rows='1' onkeyup='auto_grow(this)' style='resize: none'></textarea><span class='input-group-addon' onclick='removeStep(this)'><i class='fa fa-remove' onclick='removeStep(this)'></i></span></div>";
+                        document.getElementById("listStep").previousSibling.innerHTML = "";
                         document.getElementById("listStep").appendChild(step);
                         //Change Steps Order
                         var stepOrder = document.getElementsByClassName("stepOrder");
@@ -779,7 +779,9 @@ desired effect
                         }
                     }
 
-                    //MAKE LIST EVENT
+
+
+                    //MAKE SORTABLE LIST
                     this.$content.find("#listStep").sortable({
                         update: function (event, ui) {
                             //Change Steps Order
@@ -797,23 +799,53 @@ desired effect
                             //GET ADVICE NAME
                             var addAdviceName = this.$content.find("#addAdviceName").val();
                             var insertSQL = "BEGIN TRAN BEGIN TRY INSERT INTO tblAdvice VALUES('" + addAdviceName + "');";
-                            
+
                             //GET TRIGGERS
                             var trigGrad = document.getElementById("trigGrad");
+                            var trigReturnee = document.getElementById("trigReturnee");
+                            var trigGPA = document.getElementById("trigGPA");
+
+                            //GET STEPS
+                            var stepsTextArea = document.getElementsByClassName("stepsTextArea");
+
                             //CHECK TRIGGERS
                             if (trigGrad.childNodes[0].childNodes[0].checked == true) {
                                 insertSQL += "INSERT INTO tblAdviceTrigger(adviceName,trigName) VALUES('" + addAdviceName + "','Graduating');";
+                            }
+                            if (trigReturnee.childNodes[0].childNodes[0].checked == true) {
+                                insertSQL += "INSERT INTO tblAdviceTrigger(adviceName,trigName) VALUES('" + addAdviceName + "','Returnee');";
+                            }
+                            if (trigGPA.childNodes[0].childNodes[0].checked == true) {
+                                insertSQL += "INSERT INTO tblAdviceTrigger(adviceName,trigName,param1,param2) VALUES('" + addAdviceName + "','GPA','" + document.getElementById("subjGPAMin").value + "','" + document.getElementById("subjGPAMax").value + "');";
+                            }
+                            //CHECK STEPS
+                            for (var i = 0; i < stepsTextArea.length; i++) {
+                                insertSQL += "INSERT INTO tblAdviceSteps VALUES('" + addAdviceName + "'," + (i + 1) + ",'" + stepsTextArea[i].value + "')";
                             }
 
                             insertSQL += "COMMIT END TRY BEGIN CATCH SELECT ERROR_MESSAGE() AS ErrorMessage; ROLLBACK END CATCH;";
                             if (updateAndInsert(insertSQL) == true) {
                                 success("Advice Added");
                             }
+                            else {
+                                Failed("Added");
+                            }
                         }
                     },
                     cancel: {}
                 }
             });
+        }
+
+        //REMOVE STEP EVENT
+        function removeStep(elem) {
+            //Delete Self
+            elem.parentNode.parentNode.remove(elem.parentNode.parentNode.parentNode);
+            //Change Steps Order
+            var stepOrder = document.getElementsByClassName("stepOrder");
+            for (var i = 0; i < stepOrder.length; i++) {
+                stepOrder[i].innerHTML = i + 1;
+            }
         }
 
         function auto_grow(element) {
