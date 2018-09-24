@@ -236,7 +236,7 @@ function getAdviceStep(adviceName) {
 }
 
 function getNotes(adviceName, courseCode) {
-    var adviceNotes;
+    var adviceNotes = "";
     $.ajax({
         type: 'POST',
         url: 'Advice.aspx/universalQuery',
@@ -256,7 +256,9 @@ function getNotes(adviceName, courseCode) {
 
             //Get Rows From XML
             var XMLrows = xmlDoc.getElementsByTagName("Table");
-            adviceNotes = XMLrows[0].getElementsByTagName("adviceNotes")[0].innerHTML;
+            if (XMLrows.length > 0) {
+                adviceNotes = XMLrows[0].getElementsByTagName("adviceNotes")[0].innerHTML;
+            }
         },
         failure: function (response) {
             alert(response.d);
@@ -272,7 +274,7 @@ function getStudAdvProg(elem, studNo,courseCode,studName) {
         icon: 'fa fa-list',
         type: 'purple',
         columnClass: 'large',
-        content: "<div style='background: #ECF0F5' class='pad'><ul><li>These are the steps that needed to be accomplished by the students</li><li>Each step needs to be checked by your chairperson</li></ul><ul id='listStep' class='list-unstyled' ></ul></div>",
+        content: "<div style='background: #ECF0F5' class='pad'><ul><li>These are the steps that needed to be accomplished by the students</li><li>You need to check the advice if your done</li></ul><ul id='listStep' class='list-unstyled' ></ul></div>",
         buttons: {
             print: {
                 btnClass: 'bg-purple',
@@ -291,7 +293,7 @@ function getStudAdvProg(elem, studNo,courseCode,studName) {
             for (var i = 0; i < currentListStep.length; i++) {
                 var step = document.createElement("li");
                 step.style.cursor = 'pointer';
-                step.innerHTML = "<div class='input-group'><span class='input-group-addon stepOrder'>" + (i + 1) + "</span><textarea class='form-control stepsTextArea' rows='1' style='resize:none' disabled>" + currentListStep[i] + "</textarea><span class='input-group-addon'><input type='checkbox' disabled></span></div>";
+                step.innerHTML = "<div class='input-group'><span class='input-group-addon stepOrder'>" + (i + 1) + "</span><textarea class='form-control stepsTextArea' rows='1' style='resize:none' disabled>" + currentListStep[i] + "</textarea><span class='input-group-addon'><input type='checkbox'></span></div>";
                 if (checkAdviceStep(studNo, adviceName, step.getElementsByClassName('stepOrder')[0].innerHTML) == true) {
                     step.childNodes[0].childNodes[2].childNodes[0].checked = true;
                 }
@@ -305,6 +307,8 @@ function getStudAdvProg(elem, studNo,courseCode,studName) {
         }
     });
 }
+
+
 
 function auto_grow(element) {
     element.style.height = "5px";
@@ -481,3 +485,10 @@ function searchSubjOffering(subjID) {
 
     });
 }
+
+
+//REAL ADVICE TRIGGERS
+function subjFailed(studNo,param1,param2) {
+    return true;
+}
+

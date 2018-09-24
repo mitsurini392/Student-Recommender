@@ -242,7 +242,7 @@
             <!-- /.container -->
         </div>
         <!-- /.content-wrapper -->
-<%--        <footer class="main-footer">
+        <%--        <footer class="main-footer">
             <div class="container">
                 <div class="pull-right hidden-xs">
                     <b>Version</b> 2.3.8
@@ -353,23 +353,29 @@
                         var adviceTable = document.createElement("table");
                         adviceTable.className = "table table-striped";
                         var tableHeader = adviceTable.insertRow(-1);
-                        tableHeader.innerHTML = "<th>Completed</th><th>Type</th><th>Content</th><th>Action</th>";
+                        tableHeader.innerHTML = "<th>Status</th><th>Type</th><th>Content</th><th>Action</th>";
                         LoadAdvicesContainer.appendChild(adviceTable);
 
                         for (var i = 0; i < XMLrows.length; i++) {
-                            if (XMLrows[i].getElementsByTagName("advType")[0].innerHTML == "Scholastic Delinquent") {
-                                var row = adviceTable.insertRow(-1);
-                                row.innerHTML = "<td class='text-center' disabled><input type='checkbox' disabled></td><td>" + XMLrows[i].getElementsByTagName("advType")[0].innerHTML + "</td><td>" + getAdviceStep(XMLrows[i].getElementsByTagName("advType")[0].innerHTML)[0].substring(0, 60) + "....</td><td><button class='btn bg-purple' onclick=\"getStudAdvProg(this,'" + currentStudentNo + "','" + currentCourse + "','" + $("#profileUser").html() + "')\">View</button></td>";
-                                if (checkCompleteAdvice(XMLrows[i].getElementsByTagName("advType")[0].innerHTML, currentStudentNo) == true) {
-                                    row.childNodes[0].childNodes[0].checked = true;
-                                }
-                            }
-                            else if (XMLrows[i].getElementsByTagName("advType")[0].innerHTML == "Returnee / Readmission") {
-                                var row = adviceTable.insertRow(-1);
-                                row.innerHTML = "<td class='text-center' disabled><input type='checkbox' disabled></td><td>" + XMLrows[i].getElementsByTagName("advType")[0].innerHTML + "</td><td>" + getAdviceStep(XMLrows[i].getElementsByTagName("advType")[0].innerHTML)[0].substring(0, 60) + "....</td><td><button class='btn bg-purple' onclick=\"getStudAdvProg(this,'" + currentStudentNo + "','" + currentCourse + "','" + $("#profileUser").html() + "')\">View</button></td>";
-                                if (checkCompleteAdvice(XMLrows[i].getElementsByTagName("advType")[0].innerHTML, currentStudentNo) == true) {
-                                    row.childNodes[0].childNodes[0].checked = true;
-                                }
+                            //if (XMLrows[i].getElementsByTagName("advType")[0].innerHTML == "Scholastic Delinquent") {
+                            //    var row = adviceTable.insertRow(-1);
+                            //    row.innerHTML = "<td class='text-center' disabled><input type='checkbox' disabled></td><td>" + XMLrows[i].getElementsByTagName("advType")[0].innerHTML + "</td><td>" + getAdviceStep(XMLrows[i].getElementsByTagName("advType")[0].innerHTML)[0].substring(0, 60) + "....</td><td><button class='btn bg-purple' onclick=\"getStudAdvProg(this,'" + currentStudentNo + "','" + currentCourse + "','" + $("#profileUser").html() + "')\">View</button></td>";
+                            //    if (checkCompleteAdvice(XMLrows[i].getElementsByTagName("advType")[0].innerHTML, currentStudentNo) == true) {
+                            //        row.childNodes[0].childNodes[0].checked = true;
+                            //    }
+                            //}
+                            //else if (XMLrows[i].getElementsByTagName("advType")[0].innerHTML == "Returnee / Readmission") {
+                            //    var row = adviceTable.insertRow(-1);
+                            //    row.innerHTML = "<td class='text-center' disabled><input type='checkbox' disabled></td><td>" + XMLrows[i].getElementsByTagName("advType")[0].innerHTML + "</td><td>" + getAdviceStep(XMLrows[i].getElementsByTagName("advType")[0].innerHTML)[0].substring(0, 60) + "....</td><td><button class='btn bg-purple' onclick=\"getStudAdvProg(this,'" + currentStudentNo + "','" + currentCourse + "','" + $("#profileUser").html() + "')\">View</button></td>";
+                            //    if (checkCompleteAdvice(XMLrows[i].getElementsByTagName("advType")[0].innerHTML, currentStudentNo) == true) {
+                            //        row.childNodes[0].childNodes[0].checked = true;
+                            //    }
+                            //}
+                            var row = adviceTable.insertRow(-1);
+                            row.innerHTML = "<td class='text-center' disabled >Unfinished</td><td>" + XMLrows[i].getElementsByTagName("advType")[0].innerHTML + "</td><td>" + getAdviceStep(XMLrows[i].getElementsByTagName("advType")[0].innerHTML)[0].substring(0, 60) + "....</td><td><button class='btn bg-purple' onclick=\"getStudAdvProg(this,'" + currentStudentNo + "','" + currentCourse + "','" + $("#profileUser").html() + "')\">View</button></td>";
+                            //Change status if completed
+                            if (checkCompleteAdvice(XMLrows[i].getElementsByTagName("advType")[0].innerHTML, currentStudentNo) == true) {
+                                row.childNodes[0].innerHTML = "Finished (Pending Verification)";
                             }
                         }
                     }
@@ -892,72 +898,112 @@
                             //Advice Tab
                             var tab3 = document.getElementById("tab3");
                             tab3.innerHTML = "";
-                            ////////////////////////////Check For Returnee
-                            if (checkReturnee(currentStudentNo) == true) {
-                                var returneeContainer = document.createElement("div");
-                                var stepsList = getAdviceStep('Returnee / Readmission');
-                                var stepsContent = "";
-                                for (var i = 0; i < stepsList.length; i++) {
-                                    stepsContent += "<li>" + stepsList[i] + "</li>";
-                                }
-                                returneeContainer.innerHTML = "<div class='box box-solid'>" +
-                                    "<div class='box-header with-border'>" +
-                                    "<i class='fa fa-file-o'></i>" +
-                                    "<h3 class='box-title'>Returnee / Readmission</h3>" +
-                                    "</div>" +
-                                    "<div class='box-body'>" +
-                                    "<ol>" + stepsContent + "</ol>" +
-                                    "<hr style='height: 1px; background-color: #C1C1C1; border: none'>" +
-                                    "<p>Chairpersons Note:</p>" +
-                                    "<p>" + getNotes('Returnee / Readmission', currentCourse).replace(/&lt;br&gt;/g, '') + "</p>" +
-                                    "</div>" +
-                                    "</div>";
-                                tab3.appendChild(returneeContainer);
-                                var SQL = "INSERT INTO tblAdviceList VALUES('" + currentStudentNo + "','Returnee / Readmission',null,0);";
-                                //DONT ADD TO SQL IF EXIST
-                                if (searchStudAdvList(currentStudentNo, 'Returnee / Readmission') == false) {
-                                    if (updateAndInsert(SQL) == true) {
-                                        ///SUCCESS
-                                    }
-                                    else {
-                                        //FAILED
-                                    }
-                                }
-                            }
 
-                            /////////////////////////////////Check For Scholastic Delinquent
+                            ////////////////////////////// CHECK LIST OF ADVICE
+                            $.ajax({
+                                type: 'POST',
+                                url: 'studentHome.aspx/universalQuery',
+                                async: false,
+                                data: JSON.stringify({ SQL: "Select * From tblAdvice ;" }),
+                                contentType: 'application/json; charset=utf-8',
+                                dataType: 'json',
+                                success: function (response) {
+                                    var xml = document.createElement("div");
+                                    xml.innerHTML = response.d;
 
-                            if (getFailedSubj(currentStudentNo).length >= 4) {
-                                var scholDeContainer = document.createElement("div");
-                                var stepsList = getAdviceStep('Scholastic Delinquent');
-                                var stepsContent = "";
-                                for (var i = 0; i < stepsList.length; i++) {
-                                    stepsContent += "<li>" + stepsList[i] + "</li>";
-                                }
-                                scholDeContainer.innerHTML = "<div class='box box-solid'>" +
-                                    "<div class='box-header with-border'>" +
-                                    "<i class='fa fa-file-o'></i>" +
-                                    "<h3 class='box-title'>Scholastic Delinquency</h3>" +
-                                    "</div>" +
-                                    "<div class='box-body'>" +
-                                    "<ol>" + stepsContent + "<ol>" +
-                                    "<hr style='height: 1px; background-color: #C1C1C1; border: none'>" +
-                                    "<p>Chairpersons Note:</p>" +
-                                    "<p>" + getNotes('Scholastic Delinquent', currentCourse).replace(/&lt;br&gt;/g, '') + "</p>" +
-                                    "</div>" +
-                                    "</div>";
-                                tab3.appendChild(scholDeContainer);
-                                var SQL = "DELETE FROM tblAdviceList WHERE advType = 'Scholastic Delinquent' AND studNo = '" + currentStudentNo + "'; INSERT INTO tblAdviceList VALUES('" + currentStudentNo + "','Scholastic Delinquent',null,0);";
-                                //DONT ADD IF EXIST
-                                if (searchStudAdvList(currentStudentNo, 'Scholastic Delinquent') == false) {
-                                    if (updateAndInsert(SQL) == true) {
-                                        ///SUCCESS
+                                    //XML pareser
+                                    var text = response.d;
+                                    var parser, xmlDoc;
+                                    parser = new DOMParser();
+                                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                                    //Get Rows From XML
+                                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                                    if (XMLrows.length > 0) {
+                                        for (var i = 0; i < XMLrows.length; i++) {
+                                            //IF Advice matched on students grade show advice
+                                            if (checkAdviceTriggers(XMLrows[i].getElementsByTagName("adviceName")[0].innerHTML) == true) {
+                                                showAdviceSteps(XMLrows[i].getElementsByTagName("adviceName")[0].innerHTML);
+                                            }
+                                        }
                                     }
-                                    else {
-                                        //FAILED
-                                    }
+                                },
+                                failure: function (response) {
+                                    alert(response.d);
                                 }
-                            }
+                            });
+
+
+                            //////////////////////////////Check For Returnee
+                            //if (checkReturnee(currentStudentNo) == true) {
+                            //    var returneeContainer = document.createElement("div");
+                            //    var stepsList = getAdviceStep('Returnee / Readmission');
+                            //    var stepsContent = "";
+                            //    for (var i = 0; i < stepsList.length; i++) {
+                            //        stepsContent += "<li>" + stepsList[i] + "</li>";
+                            //    }
+                            //    returneeContainer.innerHTML = "<div class='box box-solid'>" +
+                            //        "<div class='box-header with-border'>" +
+                            //        "<i class='fa fa-file-o'></i>" +
+                            //        "<h3 class='box-title'>Returnee / Readmission</h3>" +
+                            //        "</div>" +
+                            //        "<div class='box-body'>" +
+                            //        "<ol>" + stepsContent + "</ol>" +
+                            //        "<hr style='height: 1px; background-color: #C1C1C1; border: none'>" +
+                            //        "<p>Chairpersons Note:</p>" +
+                            //        "<p>" + getNotes('Returnee / Readmission', currentCourse).replace(/&lt;br&gt;/g, '') + "</p>" +
+                            //        "</div>" +
+                            //        "</div>";
+                            //    tab3.appendChild(returneeContainer);
+                            //    var SQL = "INSERT INTO tblAdviceList VALUES('" + currentStudentNo + "','Returnee / Readmission',null,0);";
+                            //    //DONT ADD TO SQL IF EXIST
+                            //    if (searchStudAdvList(currentStudentNo, 'Returnee / Readmission') == false) {
+                            //        if (updateAndInsert(SQL) == true) {
+                            //            ///SUCCESS
+                            //        }
+                            //        else {
+                            //            //FAILED
+                            //        }
+                            //    }
+                            //}
+
+
+                            ///////////////////////////////////Check For Scholastic Delinquent
+
+                            //if (getFailedSubj(currentStudentNo).length >= 4) {
+                            //    var scholDeContainer = document.createElement("div");
+                            //    var stepsList = getAdviceStep('Scholastic Delinquent');
+                            //    var stepsContent = "";
+                            //    for (var i = 0; i < stepsList.length; i++) {
+                            //        stepsContent += "<li>" + stepsList[i] + "</li>";
+                            //    }
+                            //    scholDeContainer.innerHTML = "<div class='box box-solid'>" +
+                            //        "<div class='box-header with-border'>" +
+                            //        "<i class='fa fa-file-o'></i>" +
+                            //        "<h3 class='box-title'>Scholastic Delinquency</h3>" +
+                            //        "</div>" +
+                            //        "<div class='box-body'>" +
+                            //        "<ol>" + stepsContent + "<ol>" +
+                            //        "<hr style='height: 1px; background-color: #C1C1C1; border: none'>" +
+                            //        "<p>Chairpersons Note:</p>" +
+                            //        "<p>" + getNotes('Scholastic Delinquent', currentCourse).replace(/&lt;br&gt;/g, '') + "</p>" +
+                            //        "</div>" +
+                            //        "</div>";
+                            //    tab3.appendChild(scholDeContainer);
+                            //    var SQL = "DELETE FROM tblAdviceList WHERE advType = 'Scholastic Delinquent' AND studNo = '" + currentStudentNo + "'; INSERT INTO tblAdviceList VALUES('" + currentStudentNo + "','Scholastic Delinquent',null,0);";
+                            //    //DONT ADD IF EXIST
+                            //    if (searchStudAdvList(currentStudentNo, 'Scholastic Delinquent') == false) {
+                            //        if (updateAndInsert(SQL) == true) {
+                            //            ///SUCCESS
+                            //        }
+                            //        else {
+                            //            //FAILED
+                            //        }
+                            //    }
+                            //}
+
+
                             /////////////////////////////Check For Petitions
                             if (getFailedSubj(currentStudentNo).length > 0) {
                                 var subjs = getFailedSubj(currentStudentNo);
@@ -1016,6 +1062,80 @@
                 }
             });
         });
+
+        function checkAdviceTriggers(adviceName) {
+            var matched = true;
+            $.ajax({
+                type: 'POST',
+                url: 'studentHome.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "Select * From tblAdviceTrigger where adviceName = '" + adviceName + "';" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    if (XMLrows.length > 0) {
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            //Check Subj Failed Percentage
+                            if (XMLrows[0].getElementsByTagName("trigName")[0].innerHTML == "Subject Failed") {
+                                if (subjFailed(currentStudentNo, XMLrows[0].getElementsByTagName("param1")[0].innerHTML, XMLrows[0].getElementsByTagName("param2")[0].innerHTML) == false) {
+                                    matched = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+            return matched;
+        }
+
+        function showAdviceSteps(adviceName) {
+            //Show steps
+            var advContainer = document.createElement("div");
+            var stepsList = getAdviceStep(adviceName);
+            var stepsContent = "";
+            for (var i = 0; i < stepsList.length; i++) {
+                stepsContent += "<li>" + stepsList[i] + "</li>";
+            }
+            advContainer.innerHTML = "<div class='box box-solid'>" +
+                "<div class='box-header with-border'>" +
+                "<i class='fa fa-file-o'></i>" +
+                "<h3 class='box-title'>" + adviceName + "</h3>" +
+                "</div>" +
+                "<div class='box-body'>" +
+                "<ol>" + stepsContent + "<ol>" +
+                "<hr style='height: 1px; background-color: #C1C1C1; border: none'>" +
+                "<p>Chairpersons Note:</p>" +
+                "<p>" + getNotes(adviceName, currentCourse).replace(/&lt;br&gt;/g, '') + "</p>" +
+                "</div>" +
+                "</div>";
+            tab3.appendChild(advContainer);
+            var SQL = "DELETE FROM tblAdviceList WHERE advType = '" + adviceName + "' AND studNo = '" + currentStudentNo + "'; INSERT INTO tblAdviceList VALUES('" + currentStudentNo + "','" + adviceName + "',null,0);";
+            //DONT ADD IF EXIST
+            if (searchStudAdvList(currentStudentNo, adviceName) == false) {
+                if (updateAndInsert(SQL) == true) {
+                    ///SUCCESS
+                }
+                else {
+                    //FAILED
+                }
+            }
+        }
 
         function searchStudAdvList(studno, adviceName) {
             var found = false;

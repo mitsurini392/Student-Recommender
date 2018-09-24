@@ -218,6 +218,7 @@ desired effect
                         <h3 class="box-title">Advices</h3>
                     </div>
                     <div class="box-body">
+                        <div id="viewAdvice"></div>
                         <div id="addAdvice" onclick="addAdvice()" class="text-center" style="outline-style: dashed; height: 200px; background: #ECF0F5">
                             <br />
                             <br />
@@ -268,6 +269,7 @@ desired effect
             getCurrentYearAndSem();
             currentAdmin = '<%= Session["superAdmin"].ToString() %>';
             PutUsernameOnHTML(currentAdmin);
+            viewAdvice();
         }
 
         function PutUsernameOnHTML(currentAdmin) {
@@ -680,6 +682,84 @@ desired effect
         //    textarea.value = matches.join("<br>\n") + "<br>";
         //}
 
+        function viewAdvice() {
+            var viewAdvice = document.getElementById("viewAdvice");
+            $.ajax({
+                type: 'POST',
+                url: 'superAdminHome.aspx/universalQuery',
+                data: JSON.stringify({ SQL: "SELECT * FROM tblAdvice" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                async: false,
+                success: function (response) {
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    if (XMLrows.length > 0) {
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            viewAdvice.innerHTML = "<div class='box box-widget widget-user-2'>" +
+                                "<div class='widget-user-header bg-red'>" +
+                                "<h3 class='widget-user-username'  style='margin-left: 0;'>" + XMLrows[i].getElementsByTagName("adviceName")[0].innerHTML + "</h3>" +
+                                "</div>" +
+                                "<div class='box-footer no-padding'>" +
+                                "<ul class='nav nav-stacked'>" +
+                                retrieveTriggers(XMLrows[i].getElementsByTagName("adviceName")[0].innerHTML)+
+                                "</ul>" +
+                                "</div>" +
+                                "</div>";
+                        }
+                    }
+
+                },
+                failure: function (response) {
+                    alert("Connection Failed Refresh Page");
+                }
+            });
+        }
+
+        function retrieveTriggers(adviceName) {
+            var content = "";
+            $.ajax({
+                type: 'POST',
+                url: 'superAdminHome.aspx/universalQuery',
+                data: JSON.stringify({ SQL: "SELECT *  FROM tblAdviceTrigger WHERE adviceName = '" + adviceName + "'" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                async: false,
+                success: function (response) {
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    if (XMLrows.length > 0) {
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            if (XMLrows[i].getElementsByTagName("trigName")[0].innerHTML == "Subject Failed") {
+                                content += "<li><a href='#'>Subject Failed (effective only last semester): Ranges from "+XMLrows[i].getElementsByTagName("param1")[0].innerHTML+"% to "+XMLrows[i].getElementsByTagName("param2")[0].innerHTML+"% of your grade. </a></li>";
+                            }
+
+                        }
+                    }
+
+                },
+                failure: function (response) {
+                    alert("Connection Failed Refresh Page");
+                }
+            });
+
+            return content;
+        }
+
         function addAdvice() {
             $.alert({
                 title: "Add Advice",
@@ -804,6 +884,7 @@ desired effect
                             var trigGrad = document.getElementById("trigGrad");
                             var trigReturnee = document.getElementById("trigReturnee");
                             var trigGPA = document.getElementById("trigGPA");
+                            var trigSubjFailed = document.getElementById("trigSubjFailed");
 
                             //GET STEPS
                             var stepsTextArea = document.getElementsByClassName("stepsTextArea");
@@ -817,6 +898,9 @@ desired effect
                             }
                             if (trigGPA.childNodes[0].childNodes[0].checked == true) {
                                 insertSQL += "INSERT INTO tblAdviceTrigger(adviceName,trigName,param1,param2) VALUES('" + addAdviceName + "','GPA','" + document.getElementById("subjGPAMin").value + "','" + document.getElementById("subjGPAMax").value + "');";
+                            }
+                            if (trigSubjFailed.childNodes[0].childNodes[0].checked == true) {
+                                insertSQL += "INSERT INTO tblAdviceTrigger(adviceName,trigName,param1,param2) VALUES('" + addAdviceName + "','Subject Failed','" + document.getElementById("subjFailedMin").value + "','" + document.getElementById("subjFailedMax").value + "');";
                             }
                             //CHECK STEPS
                             for (var i = 0; i < stepsTextArea.length; i++) {
