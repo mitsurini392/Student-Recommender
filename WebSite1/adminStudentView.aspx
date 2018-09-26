@@ -295,7 +295,7 @@ desired effect
             setTimeout(function () {
                 var sqlSearch;
                 if (searchValue == "") {
-                    sqlSearch = "SELECT TOP 10 studNo,studFirst,studMiddle,studLast,studEmail,studContact,studPic FROM tblStud WHERE courseCode = '" + courseCode + "'";
+                    sqlSearch = "SELECT TOP 10 * FROM tblStud left join tblAdviceList on tblStud.studNo = tblAdviceList.studNo WHERE courseCode = 'BSIT' Order by advCheck desc;";
                 }
                 else {
                     sqlSearch = "SELECT studNo, studFirst, studMiddle, studLast, studEmail, studContact, studPic FROM tblStud WHERE courseCode = '" + courseCode + "' AND (studNo LIKE '%" + searchValue + "%')";
@@ -342,7 +342,17 @@ desired effect
                                 cell3.innerHTML = studContact;
                                 cell4.innerHTML = studEmail;
                                 cell5.className = 'text-center';
-                                cell5.innerHTML = "<button class='btn btn-warning margin' onclick='viewGrades(this)'>Grades</button><button class='btn btn-warning margin' onclick='viewAdvice(this)'>Advice</button>";
+                                cell5.innerHTML = "<button class='btn btn-warning margin' onclick='viewGrades(this)'>Grades</button>";
+
+                                try {
+                                    if (XMLrows[i].getElementsByTagName("advCheck")[0].innerHTML == "0") {
+                                        row.style.background = "#e67e22";
+                                        row.style.color = "white";
+                                        cell5.innerHTML += "<button class='btn btn-warning margin' onclick='viewAdvice(this)'>Advice</button>";
+                                    }
+                                } catch (e) {
+                                    //CONTINUE
+                                }
                             }
                         }
                         else {
@@ -395,7 +405,7 @@ desired effect
 
                         }
                     },
-                    apply: {
+                    validate: {
                         btnClass: 'btn-success',
                         action: function () {
                             var currentAdviceName = this.$content.find("#currentAdviceName").html();

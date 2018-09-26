@@ -274,7 +274,7 @@ function getStudAdvProg(elem, studNo,courseCode,studName) {
         icon: 'fa fa-list',
         type: 'purple',
         columnClass: 'large',
-        content: "<div style='background: #ECF0F5' class='pad'><ul><li>These are the steps that needed to be accomplished by the students</li><li>You need to check the advice if your done</li></ul><ul id='listStep' class='list-unstyled' ></ul></div>",
+        content: "<div style='background: #ECF0F5' class='pad'><ul><li>These are the steps that needed to be accomplished by the students</li><li>Check the advice to record your progress.</li><li>When you are done, the chairperson will validate your progress and confirm.</li></ul><ul id='listStep' class='list-unstyled' ></ul></div>",
         buttons: {
             print: {
                 btnClass: 'bg-purple',
@@ -293,7 +293,7 @@ function getStudAdvProg(elem, studNo,courseCode,studName) {
             for (var i = 0; i < currentListStep.length; i++) {
                 var step = document.createElement("li");
                 step.style.cursor = 'pointer';
-                step.innerHTML = "<div class='input-group'><span class='input-group-addon stepOrder'>" + (i + 1) + "</span><textarea class='form-control stepsTextArea' rows='1' style='resize:none' disabled>" + currentListStep[i] + "</textarea><span class='input-group-addon'><input type='checkbox'></span></div>";
+                step.innerHTML = "<div class='input-group'><span class='input-group-addon stepOrder'>" + (i + 1) + "</span><textarea class='form-control stepsTextArea' rows='1' style='resize:none' disabled>" + currentListStep[i] + "</textarea><span class='input-group-addon'><input type='checkbox' onchange=\"checkOwnStep('"+adviceName+"','" + studNo + "',this)\"></span></div>";
                 if (checkAdviceStep(studNo, adviceName, step.getElementsByClassName('stepOrder')[0].innerHTML) == true) {
                     step.childNodes[0].childNodes[2].childNodes[0].checked = true;
                 }
@@ -306,6 +306,47 @@ function getStudAdvProg(elem, studNo,courseCode,studName) {
             }
         }
     });
+}
+
+function checkOwnStep(adviceName, studNo, elem) {
+    var stepOrder = elem.parentNode.parentNode.childNodes[0].innerHTML;
+    if (elem.checked == true) {
+        //alert("INSERT");
+        var SQLInsert = "INSERT INTO tblAdviceListSteps VALUES('" + studNo + "','" + adviceName + "'," + stepOrder + ");";
+        $.ajax({
+            type: 'POST',
+            url: 'Advice.aspx/universalQuery',
+            async: false,
+            data: JSON.stringify({ SQL: SQLInsert }),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                //INSERT DOES NOT RETURN
+            },
+            failure: function (response) {
+                alert(response.d);
+            }
+        });
+    }
+    else if (elem.checked == false) {
+        //alert("REMOVE");
+        var SQLInsert = "DELETE FROM tblAdviceListSteps WHERE studNo = '" + studNo + "' AND adviceName = '" + adviceName + "' AND adviceStepOrder = " + stepOrder + ";";
+        $.ajax({
+            type: 'POST',
+            url: 'Advice.aspx/universalQuery',
+            async: false,
+            data: JSON.stringify({ SQL: SQLInsert }),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                //INSERT DOES NOT RETURN
+            },
+            failure: function (response) {
+                alert(response.d);
+            }
+        });
+    }
+
 }
 
 
