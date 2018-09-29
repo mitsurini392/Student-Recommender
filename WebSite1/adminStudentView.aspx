@@ -167,29 +167,84 @@ desired effect
             </section>
             <!-- Main content -->
             <section class="content">
-                <div class="box box-warning">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Student View</h3>
-                    </div>
-                    <div class="box-body">
-                        <div class="form-group" style="width: 30%">
-                            <label>Search:</label>
-
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <i class="fa fa-search"></i>
+                <div class="nav-tabs-custom tab-warning">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">All</a></li>
+                        <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">By Ranking</a></li>
+                        <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">With Advice</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab_1">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Search:</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-search"></i>
+                                            </div>
+                                            <input type="text" class="form-control" placeholder="Student No." />
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-warning" onclick="searchStud(this)">Search</button>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <input type="text" class="form-control" placeholder="Enter Student No." />
-                                <span class="input-group-btn">
-                                    <button class="btn btn-warning" onclick="searchStud(this)">Search</button>
-                                </span>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-search"></i>
+                                            </div>
+                                            <input type="text" class="form-control" placeholder="First Name" />
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-warning" onclick="searchStud(this)">Search</button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-search"></i>
+                                            </div>
+                                            <input type="text" class="form-control" placeholder="Last Name" />
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-warning" onclick="searchStud(this)">Search</button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-
-                            <!-- /.input group -->
+                            <table class="table table-striped" id="studTable">
+                            </table>
                         </div>
-                        <table class="table table-striped" id="studTable">
-                        </table>
+                        <!-- /.tab-pane -->
+                        <div class="tab-pane" id="tab_2">
+                            The European languages are members of the same family. Their separate existence is a myth.
+                For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
+                in their grammar, their pronunciation and their most common words. Everyone realizes why a
+                new common language would be desirable: one could refuse to pay expensive translators. To
+                achieve this, it would be necessary to have uniform grammar, pronunciation and more common
+                words. If several languages coalesce, the grammar of the resulting language is more simple
+                and regular than that of the individual languages.
+                        </div>
+                        <!-- /.tab-pane -->
+                        <div class="tab-pane" id="tab_3">
+                            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                It has survived not only five centuries, but also the leap into electronic typesetting,
+                remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
+                sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
+                like Aldus PageMaker including versions of Lorem Ipsum.
+                        </div>
+                        <!-- /.tab-pane -->
                     </div>
+                    <!-- /.tab-content -->
                 </div>
 
             </section>

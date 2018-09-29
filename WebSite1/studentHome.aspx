@@ -377,6 +377,9 @@
                             if (checkCompleteAdvice(XMLrows[i].getElementsByTagName("advType")[0].innerHTML, currentStudentNo) == true) {
                                 row.childNodes[0].innerHTML = "Finished (Pending Verification)";
                             }
+                            if (checkNotif(currentStudentNo) == true) {
+                                row.childNodes[0].innerHTML = "Chairperson Notified";
+                            }
                         }
                     }
                 },
@@ -384,6 +387,37 @@
                     alert(response.d);
                 }
             });
+        }
+
+        function checkNotif(studNo) {
+            var found = false;
+            $.ajax({
+                type: 'POST',
+                url: 'studentHome.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "SELECT * FROM tblNotifs WHERE studNo = '" + studNo + "';" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    //Check if Completed
+                    if (XMLrows.length > 0) {
+                        found = true;
+                    }
+                },
+            });
+            return found;
         }
 
         function checkCompleteAdvice(adviceName, studNo) {

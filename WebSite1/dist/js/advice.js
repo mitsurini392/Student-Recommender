@@ -274,7 +274,7 @@ function getStudAdvProg(elem, studNo,courseCode,studName) {
         icon: 'fa fa-list',
         type: 'purple',
         columnClass: 'large',
-        content: "<div style='background: #ECF0F5' class='pad'><ul><li>These are the steps that needed to be accomplished by the students</li><li>Check the advice to record your progress.</li><li>When you are done, the chairperson will validate your progress and confirm.</li></ul><ul id='listStep' class='list-unstyled' ></ul></div>",
+        content: "<div style='background: #ECF0F5' class='pad'><ul><li>These are the steps that needed to be accomplished by the students</li><li>Check the advice to record your progress.</li><li>When you are done, the chairperson will validate your progress and confirm.</li></ul><ul id='listStep' class='list-unstyled' ></ul></div><br><button class='btn bg-purple pull-right' onclick=\"notifyChair('" + studNo + "')\">Notify Chairperson</button>",
         buttons: {
             print: {
                 btnClass: 'bg-purple',
@@ -304,6 +304,83 @@ function getStudAdvProg(elem, studNo,courseCode,studName) {
             for (var i = 0; i < txtAreas.length; i++) {
                 auto_grow(txtAreas[i]);
             }
+            //Check If There is Notif
+            if (checkNotif(studNo) == true) {
+                //Change Notif Button to Cancel Notif Button
+                this.$content.find("button").remove();
+                this.$content.append("<button class='btn bg-purple pull-right' onclick=\"cancelNotif('" + studNo + "')\">Cancel Notification</button>");
+            }
+        }
+    });
+}
+function cancelNotif(studNo) {
+    $.confirm({
+        title: "Cancel Notification",
+        icon: "fa fa-remove",
+        theme: "modern",
+        type: "purple",
+        buttons: {
+            confirm: {
+                btnClass: "bg-purple",
+                action: function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'Advice.aspx/universalQuery',
+                        async: false,
+                        data: JSON.stringify({ SQL: "DELETE FROM tblNotifs WHERE studNo = '" + studNo + "'" }),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        success: function (response) {
+                            window.location.href = "studentHome.aspx";
+                        },
+                        failure: function (response) {
+                            alert(response.d);
+                        }
+                    });
+                }
+            },
+            cancel: {
+
+            }
+        }
+    })
+}
+
+function notifyChair(studNo) {
+    $.confirm({
+        title: "Notify Chairperson",
+        icon: 'fa fa-list',
+        type: 'purple',
+        content: "I have read the advices the system has given me and i still insist on seeing the chairperson<br><textarea style='border-radius: 5px;width: 100%;resize: none;' rows='5' placeholder='State the reason why you want to got to the chairperson'></textarea>",
+        buttons: {
+            accept: {
+                btnClass: 'bg-purple',
+                action: function () {
+                    var today = new Date();
+                    var curDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+                    if (this.$content.find('textarea').val().length > 0) {
+                        $.ajax({
+                            type: 'POST',
+                            url: 'Advice.aspx/universalQuery',
+                            async: false,
+                            data: JSON.stringify({ SQL: "INSERT INTO tblNotifs(studNo,notifDesc,notifDate) VALUES ('" + studNo + "','" + this.$content.find('textarea').val() + "','" + curDate + "')" }),
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            success: function (response) {
+                                window.location.href = "studentHome.aspx";
+                            },
+                            failure: function (response) {
+                                alert(response.d);
+                            }
+                        });
+                    }
+                    else {
+                        $.alert("Reason cannot be blank");
+                        return false;
+                    }
+                }
+            },
+            cancel: {}
         }
     });
 }
