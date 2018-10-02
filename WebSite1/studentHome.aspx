@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="studentHome.aspx.cs" Inherits="studentHome" %>
+﻿6<%@ Page Language="C#" AutoEventWireup="true" CodeFile="studentHome.aspx.cs" Inherits="studentHome" %>
 
 <!DOCTYPE html>
 
@@ -798,6 +798,9 @@
         $(document).ready(function () {
             $('#rootwizard').bootstrapWizard({
                 onNext: function (tab, navigation, index) {
+                    /////DECLARE CURRENT YEAR AND SECTION
+                    var currentSec = "";
+                    var currentYear = "";
                     if (index == 1) {
                         if (gradeStr == "") {
                             $.alert({
@@ -857,6 +860,7 @@
                                         var subjName = row.insertCell(-1);
                                         subjName.innerHTML = subj[j].cells[2].childNodes[0].innerHTML;
                                         var subjSec = row.insertCell(-1);
+                                        subjSec.className = "subjSec";
                                         subjSec.innerHTML = subj[j].cells[5].innerHTML;
                                         var subjFGrade = row.insertCell(-1);
                                         subjFGrade.innerHTML = subj[j].cells[6].innerHTML;
@@ -926,6 +930,9 @@
                                 }
                             }
                         }
+                        currentSec = document.getElementsByClassName("subjSec")[0].innerHTML;
+                        SQLInsert += "UPDATE tblStud SET studSec = '" + currentSec + "' WHERE studNo = '" + currentStudentNo + "'";
+                        SQLInsert += "UPDATE tblStud SET studYear = (select count(distinct gradesYear)  from tblGrades where studNo = '"+currentStudentNo+"') WHERE studNo = '" + currentStudentNo + "'";
                         SQLInsert += "	COMMIT END TRY BEGIN CATCH SELECT ERROR_MESSAGE() AS ErrorMessage; ROLLBACK END CATCH";
                         console.log(SQLInsert);
                         if (executeToSQL(SQLInsert) == true) {

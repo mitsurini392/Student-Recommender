@@ -175,48 +175,16 @@ desired effect
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_1">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Search:</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon">
-                                                <i class="fa fa-search"></i>
-                                            </div>
-                                            <input type="text" class="form-control" placeholder="Student No." />
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-warning" onclick="searchStud(this)">Search</button>
-                                            </span>
-                                        </div>
+                            <div class="form-group">
+                                <label>Search:</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-search"></i>
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>&nbsp;</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon">
-                                                <i class="fa fa-search"></i>
-                                            </div>
-                                            <input type="text" class="form-control" placeholder="First Name" />
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-warning" onclick="searchStud(this)">Search</button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>&nbsp;</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon">
-                                                <i class="fa fa-search"></i>
-                                            </div>
-                                            <input type="text" class="form-control" placeholder="Last Name" />
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-warning" onclick="searchStud(this)">Search</button>
-                                            </span>
-                                        </div>
-                                    </div>
+                                    <input type="text" class="form-control" placeholder="Student No.,First Name, Last Name " />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-warning" onclick="searchStud(this)">Search</button>
+                                    </span>
                                 </div>
                             </div>
                             <table class="table table-striped" id="studTable">
@@ -224,13 +192,14 @@ desired effect
                         </div>
                         <!-- /.tab-pane -->
                         <div class="tab-pane" id="tab_2">
-                            The European languages are members of the same family. Their separate existence is a myth.
-                For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
-                in their grammar, their pronunciation and their most common words. Everyone realizes why a
-                new common language would be desirable: one could refuse to pay expensive translators. To
-                achieve this, it would be necessary to have uniform grammar, pronunciation and more common
-                words. If several languages coalesce, the grammar of the resulting language is more simple
-                and regular than that of the individual languages.
+                            <div class="row">
+                                <div class="col-lg-3" id="selectYear">
+
+                                </div>
+                                <div class="col-lg-9" id="viewYear">
+                                    
+                                </div>
+                            </div>
                         </div>
                         <!-- /.tab-pane -->
                         <div class="tab-pane" id="tab_3">
@@ -302,6 +271,7 @@ desired effect
             currentCourse = '<%= Session["adminCourse"].ToString() %>';
             loadProfile(currentAdminUser);
             loadGrades(currentCourse, "");
+            loadRanking();
         }
 
         function loadProfile(adminUsername) {
@@ -353,7 +323,7 @@ desired effect
                     sqlSearch = "SELECT TOP 10 * FROM tblStud left join tblAdviceList on tblStud.studNo = tblAdviceList.studNo WHERE courseCode = 'BSIT' Order by advCheck desc;";
                 }
                 else {
-                    sqlSearch = "SELECT studNo, studFirst, studMiddle, studLast, studEmail, studContact, studPic FROM tblStud WHERE courseCode = '" + courseCode + "' AND (studNo LIKE '%" + searchValue + "%')";
+                    sqlSearch = "SELECT studNo, studFirst, studMiddle, studLast, studEmail, studContact, studPic FROM tblStud WHERE courseCode = '" + courseCode + "' AND (studNo LIKE '%" + searchValue + "%' OR studFirst LIKE '%" + searchValue + "%' OR studLast LIKE '%" + searchValue + "%')";
                 }
                 $.ajax({
                     type: 'POST',
@@ -397,7 +367,7 @@ desired effect
                                 cell3.innerHTML = studContact;
                                 cell4.innerHTML = studEmail;
                                 cell5.className = 'text-center';
-                                cell5.innerHTML = "<button class='btn btn-warning margin' onclick='viewGrades(this)'>Grades</button>";
+                                cell5.innerHTML = "<button class='btn btn-warning margin' onclick=\"viewGrades('" + studNo + "')\">Grades</button>";
 
                                 try {
                                     if (XMLrows[i].getElementsByTagName("advCheck")[0].innerHTML == "0") {
@@ -421,6 +391,84 @@ desired effect
                 });
             }, 10);
         }
+
+        function loadRanking() {
+            var selectYear = document.getElementById("selectYear");
+            $.ajax({
+                type: 'POST',
+                url: 'adminStudentView.aspx/universalQuery',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ SQL: "select distinct studYear from tblStud WHERE courseCode = '" + currentCourse + "';" }),
+                dataType: 'json',
+                async: false,
+                success: function (response) {
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    if (XMLrows.length > 0) {
+                        selectYear.innerHTML = "";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            selectYear.innerHTML += "<div class='small-box bg-yellow'>" +
+                                "<div class='inner'>" +
+                                "<h4>" + numbersuffix(XMLrows[i].getElementsByTagName("studYear")[0].innerHTML) + " Year</h4>" +
+                                "<br /><br />" +
+                                "</div>" +
+                                "<div class='icon'>" +
+                                "<i class='ion ion-ios-people'></i>" +
+                                "</div>" +
+                                "<a href='#' onclick=\"viewYear('"+XMLrows[i].getElementsByTagName("studYear")[0].innerHTML+"')\" class='small-box-footer'>View Students <i class='fa fa-arrow-circle-right'></i></a>" +
+                                "</div>";
+                        }
+                    }
+
+                }
+            });
+
+        }
+
+        function viewYear(yr) {
+            var viewYear = document.getElementById("viewYear");
+            $.ajax({
+                type: 'POST',
+                url: 'adminStudentView.aspx/universalQuery',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ SQL: "SELECT tblGrades.studNo,tblStud.studFirst,tblStud.studMiddle,tblStud.studLast,tblStud.StudSec,AVG(CAST(gradesGrade AS FLOAT)) AS gradesGrade  FROM tblGrades inner join tblStud on tblGrades.studNo = tblStud.studNo WHERE ISNUMERIC(gradesGrade) = 1 AND tblStud.courseCode = '" + currentCourse + "' AND tblStud.studYear = '" + yr + "' GROUP BY tblGrades.studNo,tblStud.studFirst,tblStud.studMiddle,tblStud.studLast,tblStud.studSec ORDER BY gradesGrade ASC " }),
+                dataType: 'json',
+                async: false,
+                success: function (response) {
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    if (XMLrows.length > 0) {
+                       content = "<table class='table table-striped'>" +
+                                "<tr><th>Rank</th><th>Student No.</th><th>Name</th><th>Section</th><th>GPA</th><th>Grades</th></tr>";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            content += "<tr><td>"+(i+1)+"</td><td>" + XMLrows[i].getElementsByTagName("studNo")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("studFirst")[0].innerHTML + " " + XMLrows[i].getElementsByTagName("studMiddle")[0].innerHTML + " " + XMLrows[i].getElementsByTagName("studMiddle")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("StudSec")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("gradesGrade")[0].innerHTML.substring(0,4) + "</td><td><button class='btn btn-warning margin' onclick=\"viewGrades('"+XMLrows[i].getElementsByTagName("studNo")[0].innerHTML+"')\">Grades</button></td></tr>";
+                        }
+                        viewYear.innerHTML = content;
+                    }
+
+                }
+            });
+            
+        }
+
+        function listStudentAdvice() {
+
+        }
+
         function viewAdvice(elem) {
             var studNo = elem.parentNode.parentNode.childNodes[1].innerHTML;
             var adviceName = "";
@@ -607,8 +655,8 @@ desired effect
             element.style.height = (element.scrollHeight) + "px";
         }
 
-        function viewGrades(elem) {
-            var studCurr = getStudCurr(elem.parentNode.parentNode.cells[1].innerHTML);
+        function viewGrades(studNo) {
+            var studCurr = getStudCurr(studNo);
             $.confirm({
                 title: "Student Grade",
                 content: "",
@@ -645,8 +693,8 @@ desired effect
                             var XMLrows = xmlDoc.getElementsByTagName("Table");
                             if (XMLrows.length > 0) {
                                 for (var i = 0; i < XMLrows.length; i++) {
-                                    if (getStudClassifAve(elem.parentNode.parentNode.cells[1].innerHTML, XMLrows[i].getElementsByTagName("subjClassi")[0].innerHTML) != "") {
-                                        aveContent.innerHTML += "<div class='col-md-6'><input value='" + getStudClassifAve(elem.parentNode.parentNode.cells[1].innerHTML, XMLrows[i].getElementsByTagName("subjClassi")[0].innerHTML) + "' class='margin aveKnob'></input><div class='knob-label'>" + XMLrows[i].getElementsByTagName("subjClassi")[0].innerHTML + "</div></div>";
+                                    if (getStudClassifAve(studNo, XMLrows[i].getElementsByTagName("subjClassi")[0].innerHTML) != "") {
+                                        aveContent.innerHTML += "<div class='col-md-6'><input value='" + getStudClassifAve(studNo, XMLrows[i].getElementsByTagName("subjClassi")[0].innerHTML) + "' class='margin aveKnob'></input><div class='knob-label'>" + XMLrows[i].getElementsByTagName("subjClassi")[0].innerHTML + "</div></div>";
                                     }
                                     else {
                                         aveContent.innerHTML += "<div class='col-md-6'><input data-displayInput='false' data-bgColor='#CACED2' value='1' class='margin aveKnob'></input><div class='knob-label'>" + XMLrows[i].getElementsByTagName("subjClassi")[0].innerHTML + "</div></div>";
@@ -654,7 +702,7 @@ desired effect
                                     }
                                 }
                             }
-                            var overAllAve = getOverAllAve(elem.parentNode.parentNode.cells[1].innerHTML);
+                            var overAllAve = getOverAllAve(studNo);
                             if (overAllAve != "") {
                                 aveContent.innerHTML += "<div class='row'><div class='col-md-12'><input value='" + overAllAve + "' class='margin aveKnob'></input><div class='knob-label'>Overall Average</div></div></div>";
                             }
@@ -704,7 +752,7 @@ desired effect
 
                             for (var i = 0; i < XMLrows.length; i++) {
                                 var strSem;
-                                var grade = getSubjGrade(elem.parentNode.parentNode.cells[1].innerHTML, XMLrows[i].getElementsByTagName("subjID")[0].innerHTML);
+                                var grade = getSubjGrade(studNo, XMLrows[i].getElementsByTagName("subjID")[0].innerHTML);
                                 //Change GRADE STATUS COLOR
                                 var gradeStatColor = "";
                                 if (grade[1] == "P") {
@@ -900,6 +948,22 @@ desired effect
                 }
             });
             return subjGrade;
+        }
+
+        //Get Number Suffix
+        function numbersuffix(i) {
+            var j = i % 10,
+                k = i % 100;
+            if (j == 1 && k != 11) {
+                return i + "st";
+            }
+            if (j == 2 && k != 12) {
+                return i + "nd";
+            }
+            if (j == 3 && k != 13) {
+                return i + "rd";
+            }
+            return i + "th";
         }
 
     </script>

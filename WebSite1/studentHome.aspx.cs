@@ -223,14 +223,22 @@ public partial class studentHome : System.Web.UI.Page {
         SQLConn.con.Open();
         SqlCommand cmd = new SqlCommand(SQL, SQLConn.con);
 
-        SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+        try
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
 
-        var ds = new DataSet();
-        adapter.Fill(ds);
+            var ds = new DataSet();
+            adapter.Fill(ds);
 
-        SQLConn.con.Close();
+            SQLConn.con.Close();
 
-        return ds.GetXml();
+            return ds.GetXml();
+        }
+        catch (Exception e)
+        {
+            return e.ToString();
+            throw;
+        }
 
     }
 
