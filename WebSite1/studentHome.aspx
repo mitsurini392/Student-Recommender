@@ -1,4 +1,4 @@
-﻿6<%@ Page Language="C#" AutoEventWireup="true" CodeFile="studentHome.aspx.cs" Inherits="studentHome" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="studentHome.aspx.cs" Inherits="studentHome" %>
 
 <!DOCTYPE html>
 
@@ -377,9 +377,6 @@
                             if (checkCompleteAdvice(XMLrows[i].getElementsByTagName("advType")[0].innerHTML, currentStudentNo) == true) {
                                 row.childNodes[0].innerHTML = "Finished (Pending Verification)";
                             }
-                            if (checkNotif(currentStudentNo) == true) {
-                                row.childNodes[0].innerHTML = "Chairperson Notified";
-                            }
                         }
                     }
                 },
@@ -390,7 +387,7 @@
         }
 
         function checkNotif(studNo) {
-            var found = false;
+            var found = "";
             $.ajax({
                 type: 'POST',
                 url: 'studentHome.aspx/universalQuery',
@@ -413,7 +410,15 @@
 
                     //Check if Completed
                     if (XMLrows.length > 0) {
-                        found = true;
+                        if (XMLrows[0].getElementsByTagName("notified")[0].innerHTML == "1") {
+                            found = "1";
+                        }
+                        else {
+                            found = true;
+                        }
+                    }
+                    else {
+                        found = false;
                     }
                 },
             });
@@ -932,7 +937,7 @@
                         }
                         currentSec = document.getElementsByClassName("subjSec")[0].innerHTML;
                         SQLInsert += "UPDATE tblStud SET studSec = '" + currentSec + "' WHERE studNo = '" + currentStudentNo + "'";
-                        SQLInsert += "UPDATE tblStud SET studYear = (select count(distinct gradesYear)  from tblGrades where studNo = '"+currentStudentNo+"') WHERE studNo = '" + currentStudentNo + "'";
+                        SQLInsert += "UPDATE tblStud SET studYear = (select count(distinct gradesYear)  from tblGrades where studNo = '" + currentStudentNo + "') WHERE studNo = '" + currentStudentNo + "'";
                         SQLInsert += "	COMMIT END TRY BEGIN CATCH SELECT ERROR_MESSAGE() AS ErrorMessage; ROLLBACK END CATCH";
                         console.log(SQLInsert);
                         if (executeToSQL(SQLInsert) == true) {

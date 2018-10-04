@@ -170,20 +170,36 @@ desired effect
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="box box-widget widget-user-2">
-                        <!-- Add the bg color to the header using any of the bg-* classes -->
-                        <div class="widget-user-header bg-yellow">
-                          <!-- /.widget-user-image -->
-                          <h3 class="widget-user-username" style="margin-left: 0px;" >School Year: 1819</h3>
-                          <h5 class="widget-user-desc" style="margin-left: 0px;">Semester: First</h5>
+                            <!-- Add the bg color to the header using any of the bg-* classes -->
+                            <div class="widget-user-header bg-yellow">
+                                <!-- /.widget-user-image -->
+                                <h3 class="widget-user-username" style="margin-left: 0px;">School Year: 1819</h3>
+                                <h5 class="widget-user-desc" style="margin-left: 0px;">Semester: First</h5>
+                            </div>
+                            <div class="box-footer no-padding">
+                                <ul class="nav nav-stacked">
+                                    <li><a href="#">Advice Accomplished<span class="pull-right badge bg-blue">14</span></a></li>
+                                    <li><a href="#">Petitions <span class="pull-right badge bg-aqua">5</span></a></li>
+                                    <li><a href="#">Upcoming Events<span class="pull-right badge bg-green">2</span></a></li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="box-footer no-padding">
-                          <ul class="nav nav-stacked">
-                            <li><a href="#">Advice Accomplished<span class="pull-right badge bg-blue">14</span></a></li>
-                            <li><a href="#">Petitions <span class="pull-right badge bg-aqua">5</span></a></li>
-                            <li><a href="#">Upcoming Events<span class="pull-right badge bg-green">2</span></a></li>
-                          </ul>
+                        <div class="box box-success">
+                            <div class="box-header ui-sortable-handle" style="cursor: move;">
+                                <i class="fa fa-comments-o"></i>
+
+                                <h3 class="box-title">Inquiring Students</h3>
+
+                            </div>
+                            <div class="box-body chat" id="inquiringStudent" style="overflow: auto; width: auto; height: 250px;">
+                                <!-- chat item -->
+                                <div class="text-center text-muted"><i class="fa fa-file-o fa-5x"></i>
+                                    <h3>No Inquiring Students</h3>
+                                </div>
+                                <!-- chat item -->
+                            </div>
+                            <!-- /.chat -->
                         </div>
-                      </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="row">
@@ -270,7 +286,7 @@ desired effect
             currentAdminUser = '<%= Session["adminUser"].ToString() %>';
             currentCourse = '<%= Session["adminCourse"].ToString() %>';
             loadProfile(currentAdminUser);
-            loadGrades(currentCourse, "");
+            getInquireStud();
         }
 
         function loadProfile(adminUsername) {
@@ -299,6 +315,74 @@ desired effect
                 },
                 failure: function (response) {
                     alert("Connection Failed Refresh Page");
+                }
+            });
+        }
+
+        function getInquireStud() {
+            $.ajax({
+                type: 'POST',
+                url: 'adminDashboard.aspx/universalQuery',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ SQL: "SELECT * FROM tblNotifs inner join tblStud on tblNotifs.studNo = tblstud.studNo WHERE notified = '0' AND courseCode = '" + currentCourse + "'  " }),
+                dataType: 'json',
+                success: function (response) {
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    if (XMLrows.length > 0) {
+                        inquiringStudent = document.getElementById("inquiringStudent");
+                        inquiringStudent.innerHTML = "";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var notifDate = new Date(XMLrows[i].getElementsByTagName("notifDate")[0].innerHTML);
+                            notifDate = (notifDate.getMonth() + 1) + '/' + notifDate.getDate() + '/' + notifDate.getFullYear();
+                            inquiringStudent.innerHTML += "<div class='item'>" +
+                                "<img src='" + XMLrows[i].getElementsByTagName("studPic")[0].innerHTML + "' alt='user image' class='online'>" +
+                                "<p class='message'>" +
+                                "<a href='#' class='name'>" +
+                                "<small class='text-muted pull-right'><i class='fa fa-calendar-o'></i> " + notifDate + "</small>" +
+                                XMLrows[i].getElementsByTagName("studFirst")[0].innerHTML + " " + XMLrows[i].getElementsByTagName("studMiddle")[0].innerHTML + " " + XMLrows[i].getElementsByTagName("studLast")[0].innerHTML +
+                                "</a>" +
+                                XMLrows[i].getElementsByTagName("notifDesc")[0].innerHTML + " <a href='#' onclick=\"notifiedStud(" + XMLrows[i].getElementsByTagName("notifCode")[0].innerHTML + ")\"><u>Done</u></a>" +
+                                "</p>" +
+                                "</div>";
+                        }
+                    }
+                },
+                failure: function (response) {
+                    alert("Connection Failed Refresh Page");
+                }
+            });
+        }
+
+        function notifiedStud(id) {
+            $.confirm({
+                title: "Alert",
+                buttons: {
+                    ok: {
+                        action: function () {
+                            $.ajax({
+                                type: 'POST',
+                                url: 'adminDashboard.aspx/universalQuery',
+                                contentType: 'application/json; charset=utf-8',
+                                data: JSON.stringify({ SQL: "UPDATE tblNotifs SET notified = 1 WHERE notifCode = " + id + ";" }),
+                                dataType: 'json',
+                                success: function (response) {
+                                    //INSERT HAS NO RETURN       
+                                    window.location.href = "adminDashboard.aspx";
+                                },
+                                failure: function (response) {
+                                    alert("Connection Failed Refresh Page");
+                                }
+                            });
+                        }
+                    },
+                    cancel: {}
                 }
             });
         }

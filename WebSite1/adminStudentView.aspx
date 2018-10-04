@@ -128,7 +128,7 @@ desired effect
                     <ul class="sidebar-menu" style="font-family: 'programme_bold'">
                         <li class="header">NAVIGATION</li>
                         <!-- Optionally, you can add icons to the links -->
-                        <li><a href="#"><i class="fa fa-bell"></i><span>Dashboard</span></a></li>
+                        <li><a href="adminDashboard.aspx"><i class="fa fa-bell"></i><span>Dashboard</span></a></li>
                         <li><a href="adminAdvice.aspx"><i class="fa fa-tasks"></i><span>Advice</span></a></li>
                         <li class="active"><a href="#"><i class="fa fa-users"></i><span>Students</span></a></li>
                         <li class="treeview">
@@ -202,14 +202,8 @@ desired effect
                             </div>
                         </div>
                         <!-- /.tab-pane -->
-                        <div class="tab-pane" id="tab_3">
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                It has survived not only five centuries, but also the leap into electronic typesetting,
-                remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-                sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
-                like Aldus PageMaker including versions of Lorem Ipsum.
+                        <div class="tab-pane listStudentAdvice" id="tab_3">
+
                         </div>
                         <!-- /.tab-pane -->
                     </div>
@@ -272,6 +266,7 @@ desired effect
             loadProfile(currentAdminUser);
             loadGrades(currentCourse, "");
             loadRanking();
+            listStudentAdvice();
         }
 
         function loadProfile(adminUsername) {
@@ -466,7 +461,75 @@ desired effect
         }
 
         function listStudentAdvice() {
+            var listStudentAdvice = document.getElementsByClassName("listStudentAdvice")[0];
+            $.ajax({
+                    type: 'POST',
+                    url: 'adminStudentView.aspx/universalQuery',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ SQL: "SELECT * FROM tblAdviceList inner join tblStud on tblStud.studNo = tblAdviceList.studNo WHERE courseCode = '" + currentCourse + "'" }),
+                    dataType: 'json',
+                    success: function (response) {
+                        //XML pareser
+                        var text = response.d;
+                        var parser, xmlDoc;
+                        parser = new DOMParser();
+                        xmlDoc = parser.parseFromString(text, "text/xml");
 
+                        //Get Rows From XML
+                        var XMLrows = xmlDoc.getElementsByTagName("Table");
+                        if (XMLrows.length > 0) {
+                            var studTable = document.createElement("table");
+                            studTable.className = "table table-striped";
+                            studTable.innerHTML = "";
+                            studTable.innerHTML = "<tr><th>Student Pic.</th><th>Student No.</th><th>Student Name</th><th>Contact</th><th>Email</th><th class='text-center'>View</th></tr>";
+
+                            for (var i = 0; i < XMLrows.length; i++) {
+                                var studNo = XMLrows[i].getElementsByTagName("studNo")[0].innerHTML;
+                                var studFirst = XMLrows[i].getElementsByTagName("studFirst")[0].innerHTML;
+                                var studMiddle = XMLrows[i].getElementsByTagName("studMiddle")[0].innerHTML;
+                                var studLast = XMLrows[i].getElementsByTagName("studLast")[0].innerHTML;
+                                var studEmail = XMLrows[i].getElementsByTagName("studEmail")[0].innerHTML;
+                                var studContact = XMLrows[i].getElementsByTagName("studContact")[0].innerHTML;
+                                var studPic = XMLrows[i].getElementsByTagName("studPic")[0].innerHTML;
+
+                                var row = studTable.insertRow(-1);
+                                var cell0 = row.insertCell(-1);
+                                var cell1 = row.insertCell(-1);
+                                var cell2 = row.insertCell(-1);
+                                var cell3 = row.insertCell(-1);
+                                var cell4 = row.insertCell(-1);
+                                var cell5 = row.insertCell(-1);
+
+                                cell0.innerHTML = "<img src='" + studPic + "' height='50px'></img>";
+                                cell1.innerHTML = studNo;
+                                cell2.innerHTML = studLast + ", " + studFirst + " " + studMiddle;
+                                cell3.innerHTML = studContact;
+                                cell4.innerHTML = studEmail;
+                                cell5.className = 'text-center';
+                                cell5.innerHTML = "<button class='btn btn-warning margin' onclick=\"viewGrades('" + studNo + "')\">Grades</button>";
+
+                                try {
+                                    if (XMLrows[i].getElementsByTagName("advCheck")[0].innerHTML == "0") {
+                                        row.style.background = "#e67e22";
+                                        row.style.color = "white";
+                                        cell5.innerHTML += "<button class='btn btn-warning margin' onclick='viewAdvice(this)'>Advice</button>";
+                                    }
+                                } catch (e) {
+                                    //CONTINUE
+                                }
+
+                                listStudentAdvice.appendChild(studTable);
+                            }
+                        }
+                        else {
+                            studTable.innerHTML = "<div class='text-center text-muted'><br><br><br><i class='fa fa-question fa-5x'></i><h2>No Records Found</h2><br><br><br><br><br><br></div>";
+
+                        }
+                    },
+                    failure: function (response) {
+                        alert("Connection Failed Refresh Page");
+                    }
+                });
         }
 
         function viewAdvice(elem) {
@@ -513,7 +576,7 @@ desired effect
                         action: function () {
                             var currentAdviceName = this.$content.find("#currentAdviceName").html();
                             if (currentAdviceName == undefined) {
-                                $.alert('Select an Advice to edit before applying.');
+                                $.alert('Select an Advice to edit before validating.');
                                 return false;
                             }
                             var adviceChecks = this.$content.find("input[type=checkbox]");

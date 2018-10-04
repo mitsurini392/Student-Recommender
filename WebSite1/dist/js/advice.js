@@ -310,6 +310,11 @@ function getStudAdvProg(elem, studNo,courseCode,studName) {
                 this.$content.find("button").remove();
                 this.$content.append("<button class='btn bg-purple pull-right' onclick=\"cancelNotif('" + studNo + "')\">Cancel Notification</button>");
             }
+            if (checkNotif(studNo) == "1") {
+                //Change Notif Button to Cancel Notif Button
+                this.$content.find("button").remove();
+                this.$content.append("<button class='btn bg-purple pull-right' disabled>Student had inquired</button>");
+            }
         }
     });
 }
@@ -363,7 +368,7 @@ function notifyChair(studNo) {
                             type: 'POST',
                             url: 'Advice.aspx/universalQuery',
                             async: false,
-                            data: JSON.stringify({ SQL: "INSERT INTO tblNotifs(studNo,notifDesc,notifDate) VALUES ('" + studNo + "','" + this.$content.find('textarea').val() + "','" + curDate + "')" }),
+                            data: JSON.stringify({ SQL: "INSERT INTO tblNotifs(studNo,notifDesc,notifDate,notified) VALUES ('" + studNo + "','" + this.$content.find('textarea').val() + "','" + curDate + "',0)" }),
                             contentType: 'application/json; charset=utf-8',
                             dataType: 'json',
                             success: function (response) {
