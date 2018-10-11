@@ -267,7 +267,7 @@ function getNotes(adviceName, courseCode) {
     return adviceNotes;
 }
 
-function getStudAdvProg(elem, studNo,courseCode,studName) {
+function getStudAdvProg(elem, studNo, courseCode, studName) {
     var adviceName = elem.parentNode.previousSibling.previousSibling.innerHTML;
     $.confirm({
         title: adviceName,
@@ -293,7 +293,7 @@ function getStudAdvProg(elem, studNo,courseCode,studName) {
             for (var i = 0; i < currentListStep.length; i++) {
                 var step = document.createElement("li");
                 step.style.cursor = 'pointer';
-                step.innerHTML = "<div class='input-group'><span class='input-group-addon stepOrder'>" + (i + 1) + "</span><textarea class='form-control stepsTextArea' rows='1' style='resize:none' disabled>" + currentListStep[i] + "</textarea><span class='input-group-addon'><input type='checkbox' onchange=\"checkOwnStep('"+adviceName+"','" + studNo + "',this)\"></span></div>";
+                step.innerHTML = "<div class='input-group'><span class='input-group-addon stepOrder'>" + (i + 1) + "</span><textarea class='form-control stepsTextArea' rows='1' style='resize:none' disabled>" + currentListStep[i] + "</textarea><span class='input-group-addon'><input type='checkbox' onchange=\"checkOwnStep('" + adviceName + "','" + studNo + "',this)\"></span></div>";
                 if (checkAdviceStep(studNo, adviceName, step.getElementsByClassName('stepOrder')[0].innerHTML) == true) {
                     step.childNodes[0].childNodes[2].childNodes[0].checked = true;
                 }
@@ -602,7 +602,7 @@ function searchSubjOffering(subjID) {
                             row.innerHTML = "<td>" + XMLrows[i].getElementsByTagName("subjCode")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("subjName")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("schedSection")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("schedRoom")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("schedProf")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("schedDesc")[0].innerHTML + "</td>";
                         }
                     }
-                },
+                }
             });
         }
 
@@ -611,7 +611,152 @@ function searchSubjOffering(subjID) {
 
 
 //REAL ADVICE TRIGGERS
-function subjFailed(studNo,param1,param2) {
-    return true;
+function subjFailed(studNo, param1, param2) {
+    var toReturn = false;
+    //GET F AND P UNITS
+
+    $.ajax({
+        type: 'POST',
+        url: 'Advice.aspx/universalQuery',
+        async: false,
+        data: JSON.stringify({
+            SQL: "select gradesStatus,SUM(subjUnits) as totalUnits from tblGrades inner join tblSubj on tblGrades.subjID = tblSubj.subjID where gradesYear = (SELECT MAX(gradesYear) FROM tblGrades WHERE studNo = '" + studNo + "') AND gradesSem = (SELECT MAX(gradesSem) FROM tblGrades WHERE studNo = '" + studNo + "') AND studNo = '" + studNo + "' AND (gradesStatus = 'P' OR gradesStatus = 'F') GROUP BY gradesStatus"
+        }),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function (response) {
+            var xml = document.createElement("div");
+            xml.innerHTML = response.d;
+
+            //XML pareser
+            var text = response.d;
+            var parser, xmlDoc;
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+
+            //Get Rows From XML
+            var XMLrows = xmlDoc.getElementsByTagName("Table");
+            if (XMLrows.length > 0) {
+                if (XMLrows[0].getElementsByTagName("gradesStatus")[0].innerHTML == 'F' && XMLrows[1].getElementsByTagName("gradesStatus")[0].innerHTML == 'P') {
+                 
+                    var subjF = XMLrows[0].getElementsByTagName("totalUnits")[0].innerHTML;
+                    subjF = parseInt(subjF, 10);
+                    var subjP = XMLrows[1].getElementsByTagName("totalUnits")[0].innerHTML;
+                    subjP = parseInt(subjP, 10)
+                    var result = ((subjF + subjP) - subjF) / (subjF + subjP);
+                    result = result * 100;
+
+                    if (result > param1 && result < param2) {
+                        toReturn = true;
+                    }
+                    else {
+                        toReturn = false;
+                    }
+                }
+            }
+            else {
+                return false;
+            }
+        }
+    });
+    return toReturn;
+}
+
+function returnee(studNo) {
+    var toReturn = false;
+    var yourYr = "";
+    var currentYr = "";
+    $.ajax({
+        type: 'POST',
+        url: 'Advice.aspx/universalQuery',
+        async: false,
+        data: JSON.stringify({ SQL: "select max(gradesYear) as latestYear from tblGrades WHERE studNo = '" + studNo + "'" }),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function (response) {
+            var xml = document.createElement("div");
+            xml.innerHTML = response.d;
+
+            //XML pareser
+            var text = response.d;
+            var parser, xmlDoc;
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+
+            //Get Rows From XML
+            var XMLrows = xmlDoc.getElementsByTagName("Table");
+            if (XMLrows.length > 0) {
+                yourYr = XMLrows[0].getElementsByTagName("latestYear")[0].innerHTML;
+            }
+        }
+    });
+
+    $.ajax({
+        type: 'POST',
+        url: 'Advice.aspx/universalQuery',
+        async: false,
+        data: JSON.stringify({ SQL: "select currentYear from tblSchoolYear" }),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function (response) {
+            var xml = document.createElement("div");
+            xml.innerHTML = response.d;
+
+            //XML pareser
+            var text = response.d;
+            var parser, xmlDoc;
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+
+            //Get Rows From XML
+            var XMLrows = xmlDoc.getElementsByTagName("Table");
+            if (XMLrows.length > 0) {
+                currentYr = XMLrows[0].getElementsByTagName("currentYear")[0].innerHTML;
+            }
+        }
+    });
+
+    if (currentYr != yourYr) {
+        toReturn = true;
+    }
+
+    return toReturn;
+}
+
+function gpa(studNo, param1, param2) {
+    var studAve = "";
+    var toReturn = false;
+    $.ajax({
+        type: 'POST',
+        url: 'Advice.aspx/universalQuery',
+        async: false,
+        data: JSON.stringify({ SQL: "select ROUND(AVG(CAST(tblGrades.gradesGrade AS DECIMAL(3,2))),2)  from tblGrades inner join tblSubj on tblGrades.subjID = tblSubj.subjID  where studNo = '" + studNo + "' AND gradesGrade LIKE '%[0-9]%'" }),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function (response) {
+            var xml = document.createElement("div");
+            xml.innerHTML = response.d;
+
+            //XML pareser
+            var text = response.d;
+            var parser, xmlDoc;
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+
+            //Get Rows From XML
+            var XMLrows = xmlDoc.getElementsByTagName("Table");
+            if (XMLrows.length > 0) {
+                studAve = $(XMLrows[0]).find('Column1').html();
+                if (parseFloat(studAve) <= parseFloat(param1) && parseFloat(studAve) >= parseFloat(param2)) {
+                    toReturn = true;
+                }
+                else {
+                    //alert("false");
+                }
+            }
+        }
+    });
+
+    return toReturn;
 }
 

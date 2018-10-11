@@ -160,6 +160,32 @@ desired effect
             </section>
             <!-- Main content -->
             <section class="content">
+                <div class="box box-success box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Search Schedule</h3>
+                        <!-- /.box-tools -->
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body" style="height: 300px; overflow: auto;">
+                        <div class="input-group input-group-sm">
+                            <input class="form-control" type="text" placeholder="Search" id="txtSearchSched">
+                            <span class="input-group-btn">
+                                <button type="button" onclick="searchSched()" class="btn btn-success btn-flat"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                        <div id="searchSchedCont">
+                            <div class="text-muted text-center">
+                                <br />
+                                <br />
+                                <i class="fa fa-file-o fa-3x"></i>
+                                <br />
+                                <br />
+                                Type a Schedule to search
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
                 <div class="box box-solid text-center text-muted" id="schedContainer">
                     <br />
                     <br />
@@ -183,7 +209,6 @@ desired effect
         <footer class="main-footer">
             <!-- To the right -->
             <div class="pull-right hidden-xs">
-                
             </div>
             <!-- Default to the left -->
             <strong></strong>
@@ -213,7 +238,7 @@ desired effect
     <script>
         //Money Euro
         $("[data-mask]").inputmask();
-        </script>
+    </script>
     <script>
         var currentAdminUser = "";
         var currentCourse = "";
@@ -222,6 +247,7 @@ desired effect
             currentCourse = '<%= Session["adminCourse"].ToString() %>';
             loadProfile(currentAdminUser);
             loadSched(currentCourse);
+
         }
 
         function loadProfile(adminUsername) {
@@ -279,14 +305,19 @@ desired effect
                         //ADD ADD BUTTON
                         var addSched = document.createElement("div");
                         addSched.className = "margin";
-                        addSched.innerHTML = "<button class='btn btn-success btn-block' onclick='addSched()'>Add</button>";
+                        addSched.innerHTML = "<button class='btn btn-success btn-block' onclick='addSched()'>Upload Schedule File</button>";
+                        var addSched2 = document.createElement("div");
+                        addSched2.className = 'margin';
+                        addSched2.innerHTML = "<button class='btn btn-success btn-block' onclick='addSingle()'>Add Single Subject Schedule</button>";
                         schedContainer.appendChild(addSched);
+                        schedContainer.appendChild(addSched2);
+                        schedContainer.appendChild(loadSchedManual(course));
                         for (var i = 0; i < XMLrows.length; i++) {
                             var schedBox = document.createElement("div");
                             schedBox.className = "box box-success box-solid";
-                            schedBox.innerHTML = "<div class='box-header with-border'><h3 class='box-title'>" + XMLrows[i].getElementsByTagName("schedAY")[0].innerHTML + "</h3></div>" +
-                                "<div class='box-body'>"+loadSchedTable(XMLrows[i].getElementsByTagName("schedAY")[0].innerHTML, XMLrows[i].getElementsByTagName("schedSem")[0].innerHTML, XMLrows[i].getElementsByTagName("schedYear")[0].innerHTML, currentCourse)+"</div>";
-                            schedContainer.appendChild(schedBox);                           
+                            schedBox.innerHTML = "<div class='box-header with-border'><h3 class='box-title'>" + XMLrows[i].getElementsByTagName("schedAY")[0].innerHTML + "</h3><div class='btn-group pull-right'><button class='btn btn-danger' onclick=\"removeUpload('" + XMLrows[i].getElementsByTagName("schedAY")[0].innerHTML + "')\"><i class='fa fa-remove'></i></button></div></div>" +
+                                "<div class='box-body'>" + loadSchedTable(XMLrows[i].getElementsByTagName("schedAY")[0].innerHTML, XMLrows[i].getElementsByTagName("schedSem")[0].innerHTML, XMLrows[i].getElementsByTagName("schedYear")[0].innerHTML, currentCourse) + "</div>";
+                            schedContainer.appendChild(schedBox);
                         }
                     }
                     else {
@@ -309,11 +340,11 @@ desired effect
                 type: 'POST',
                 url: 'adminSchedOffering.aspx/loadSchedTable',
                 contentType: 'application/json; charset=utf-8',
-                data: JSON.stringify({ schedAY: loadSchedAY , schedSem: loadSchedSem, schedYear: loadSchedYear, courseCode: courseCode}),
+                data: JSON.stringify({ schedAY: loadSchedAY, schedSem: loadSchedSem, schedYear: loadSchedYear, courseCode: courseCode }),
                 dataType: 'json',
                 async: false,
                 success: function (response) {
-                    //XML pareser
+                    //XML pareser36
                     var text = response.d;
                     var parser, xmlDoc;
                     parser = new DOMParser();
@@ -332,7 +363,7 @@ desired effect
                             "<td>" + XMLrows[i].getElementsByTagName("schedSection")[0].innerHTML + "</td>" +
                             "<td>" + XMLrows[i].getElementsByTagName("schedRoom")[0].innerHTML + "</td>" +
                             "<td>" + XMLrows[i].getElementsByTagName("schedProf")[0].innerHTML + "</td>" +
-                            "<td>"+XMLrows[i].getElementsByTagName("schedDesc")[0].innerHTML+"</td>";
+                            "<td>" + XMLrows[i].getElementsByTagName("schedDesc")[0].innerHTML + "</td>";
                     }
                     content = schedTable.outerHTML;
                 },
@@ -340,6 +371,54 @@ desired effect
                     alert("Connection Failed Refresh Page");
                 }
             });
+            return content;
+        }
+
+        function loadSchedManual(courseCode) {
+            var content = document.createElement("div");
+            $.ajax({
+                type: 'POST',
+                url: 'adminSchedOffering.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "select * FROM tblSched inner join tblSubj on tblSched.subjID = tblSubj.subjID where isUploaded = 0 and courseCode = '" + courseCode + "' select * FROM tblSubj" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    if (XMLrows.length > 0) {
+                        var tbl = document.createElement("table");
+                        tbl.className = 'table table-striped';
+                        tbl.innerHTML += "<tr><th>Subject Year</th><th>Subject Code</th><th>Subject Name</th><th>Section</th><th>Room No.</th><th>Professor</th><th>Schedule</th><th>Action</th></tr>";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            tbl.innerHTML += "<tr><td style='display: none'>" + $(XMLrows[i]).find('schedCode').html() + "</td><td>" + $(XMLrows[i]).find('schedAY').html() + "</td><td>" + $(XMLrows[i]).find('subjCode').html() + "</td><td>" + $(XMLrows[i]).find('subjName').html() + "</td><td>" + $(XMLrows[i]).find('schedSection').html() + "</td><td>" + $(XMLrows[i]).find('schedRoom').html() + "</td><td>" + $(XMLrows[i]).find('schedProf').html() + "</td><td>" + $(XMLrows[i]).find('schedDesc').html() + "</td><td><div class='btn-group'><button class='btn btn-warning' onclick=\"editSingle('" + $(XMLrows[i]).find('schedCode').html() + "')\"><i class='fa fa-edit'></i></button><button class='btn btn-danger' onclick=\"removeSingle('" + $(XMLrows[i]).find('schedCode').html() + "')\"><i class='fa fa-remove'></i></button></div></td></tr>";
+                        }
+
+                        content.innerHTML = "<div class='box box-success box-solid'>" +
+                            "<div class='box-header with-border'>" +
+                            "<h3 class='box-title'>Single Added Schedules</h3>" +
+                            "</div>" +
+                            "<div class='box-body'>" +
+                            tbl.outerHTML +
+                            "</div>" +
+                            "</div>";
+                    }
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+
             return content;
         }
 
@@ -415,19 +494,19 @@ desired effect
                 "<div class='col-xs-4'>" +
                 "<div class='form-group'>" +
                 "<label>Year Level</label>" +
-                "<input type='text' id='addYearLevel' class='form-control' value='" + yearLevel + "' disabled>" +
+                "<input type='text' id='addYearLevel' class='form-control' style='margin-bottom: 4px' value='" + yearLevel + "' disabled>" +
                 "</div>" +
                 "</div>" +
                 "<div class='col-xs-4'>" +
                 "<div class='form-group'>" +
                 "<label>School Year</label>" +
-                "<input type='text' id='addSchoolYear' class='form-control' value='" + schoolYear + "' disabled>" +
+                "<input type='text' id='addSchoolYear' class='form-control' style='margin-bottom: 4px' value='" + schoolYear + "' disabled>" +
                 "</div>" +
                 "</div>" +
                 "<div class='col-xs-4'>" +
                 "<div class='form-group'>" +
                 "<label>Semester</label>" +
-                "<input type='text' id='addSem' class='form-control' value='" + semester + "' disabled>" +
+                "<input type='text' id='addSem' class='form-control' style='margin-bottom: 4px' value='" + semester + "' disabled>" +
                 "</div>" +
                 "</div>" +
                 "</div>";
@@ -483,6 +562,7 @@ desired effect
                                 }
                             }
                             var AddSQLString = "";
+                            AddSQLString += "DELETE FROM tblSched WHERE schedAY = '" + document.getElementById("addYearLevel").value + "' AND isUploaded = 1";
                             var addSchedRows = addSched.getElementsByTagName("tr");
                             for (var i = 1; i < addSchedRows.length; i++) {
                                 //SUBJID
@@ -495,9 +575,14 @@ desired effect
                                 var schedProf = addSchedRows[i].childNodes[4].innerHTML;
                                 var schedDesc = addSchedRows[i].childNodes[5].innerHTML;
 
-                                AddSQLString += "INSERT INTO tblSched VALUES('" + subjAY + "','" + schedYear + "','" + schedSem + "','" + currentCourse + "','" + subjID + "','" + schedSection + "','" + schedRoom + "','" + schedProf + "','" + schedDesc + "');";
+                                AddSQLString += "INSERT INTO tblSched VALUES('" + subjAY + "','" + schedYear + "','" + schedSem + "','" + currentCourse + "','" + subjID + "','" + schedSection + "','" + schedRoom + "','" + schedProf + "','" + schedDesc + "',1);";
 
                             }
+
+                            //TIMESTAMP
+                            var currDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                            AddSQLString += "INSERT INTO tblAnnounce(courseCode,announceSubj,announceDesc,announceDate) VALUES ('" + currentCourse + "','New Schedule','A new schedule has been added.','" + currDate + "')";
+
 
                             if (updateAndInsert(AddSQLString) == true) {
                                 $.confirm({
@@ -512,7 +597,7 @@ desired effect
                                 })
                             }
                             else {
-                                alert("AWTS");
+                                alert("Failed");
                             }
 
                         }
@@ -662,6 +747,322 @@ desired effect
             });
 
             return success;
+        }
+
+        function addSingle() {
+            $.confirm({
+                title: 'Add Single Schedule',
+                icon: 'fa fa-list',
+                type: 'green',
+                content: "<select class='form-control selectAY' style='margin-bottom: 4px'><option>First Year</option><option>Second Year</option><option>Third Year</option><option>Fourth Year</option></select><select class='form-control selectYear' style='margin-bottom: 4px'></select><select class='form-control selectSem' style='margin-bottom: 4px'><option>First</option><option>Second</option><option>Summer</option></select><select class='form-control selectSubj' style='margin-bottom: 4px'></select><input class='form-control txtSect' style='margin-bottom: 4px' placeholder='Section'><input class='form-control txtRoom' style='margin-bottom: 4px' placeholder='Room No.'><input class='form-control txtProf' style='margin-bottom: 4px' placeholder='Professor'><input class='form-control txtSched' style='margin-bottom: 4px' placeholder='Schedule'>",
+                onOpenBefore: function () {
+                    //GET CURRENT SCHOOL YEAR
+                    var currDate = new Date();
+                    var currDateYear = currDate.getFullYear();
+                    currDateYear = currDateYear + "";
+                    currDateYear = currDateYear.substring(2, 4);
+                    this.$content.find('.selectYear').append("<option value='" + currDateYear + (parseInt(currDateYear, 10) + 1) + "'>" + currDateYear + (parseInt(currDateYear, 10) + 1) + "</option>");
+                    this.$content.find('.selectYear').append("<option value='" + (currDateYear - 1) + currDateYear + "'>" + (currDateYear - 1) + currDateYear + "</option>");
+                    var outerThis = this;
+                    $.ajax({
+                        type: 'POST',
+                        url: 'adminSchedOffering.aspx/validateSchedSubj',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify({ courseCode: currentCourse }),
+                        dataType: 'json',
+                        async: false,
+                        success: function (response) {
+                            //XML pareser
+                            var text = response.d;
+                            var parser, xmlDoc;
+                            parser = new DOMParser();
+                            xmlDoc = parser.parseFromString(text, "text/xml");
+
+                            //Get Rows From XML
+                            var XMLrows = xmlDoc.getElementsByTagName("Table");
+                            for (var i = 0; i < XMLrows.length; i++) {
+                                var opt = document.createElement("option");
+                                opt.innerHTML = XMLrows[i].getElementsByTagName("subjCode")[0].innerHTML + " - " + XMLrows[i].getElementsByTagName("subjName")[0].innerHTML;
+                                opt.value = XMLrows[i].getElementsByTagName("subjID")[0].innerHTML;
+                                var selectCourse = document.getElementsByClassName("selectCourse")[0];
+                                outerThis.$content.find('.selectSubj').append(opt);
+                            }
+                        },
+                        failure: function (response) {
+                            alert("Connection Failed Refresh Page");
+                        }
+                    });
+                },
+                buttons: {
+                    add: {
+                        btnClass: 'btn btn-success',
+                        action: function () {
+                            //GET VALUES
+                            var selectAY = this.$content.find('.selectAY').val();
+                            var selectYear = this.$content.find('.selectYear').val();
+                            var selectSem = this.$content.find('.selectSem').val();
+                            var selectSubj = this.$content.find('.selectSubj').val();
+                            var txtSect = this.$content.find('.txtSect').val();
+                            var txtRoom = this.$content.find('.txtRoom').val();
+                            var txtProf = this.$content.find('.txtProf').val();
+                            var txtSched = this.$content.find('.txtSched').val();
+
+                            var AddSQLString = "INSERT INTO tblSched VALUES('" + selectAY + "','" + selectYear + "','" + selectSem + "','" + currentCourse + "','" + selectSubj + "','" + txtSect + "','" + txtRoom + "','" + txtProf + "','" + txtSched + "',0);";
+
+                            //TIMESTAMP
+                            var currDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                            AddSQLString += "INSERT INTO tblAnnounce(courseCode,announceSubj,announceDesc,announceDate) VALUES ('" + currentCourse + "','New Schedule','A new schedule has been added.','" + currDate + "')";
+                            if (updateAndInsert(AddSQLString) == true) {
+                                $.alert({
+                                    icon: 'fa fa-check',
+                                    title: 'Success',
+                                    content: 'Schedule Added!',
+                                    theme: 'modern',
+                                    type: 'green',
+                                    buttons: {
+                                        ok: {
+                                            btnClass: 'btn btn-success',
+                                            action: function () {
+                                                window.location.href = 'adminSchedOffering.aspx';
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                            else {
+                                $.alert('Failed');
+                            }
+                        }
+                    },
+                    cancel: {
+
+                    }
+                }
+
+            });
+        }
+
+        function editSingle(id) {
+            $.confirm({
+                title: 'Edit Single Schedule',
+                icon: 'fa fa-list',
+                type: 'orange',
+                content: "<select class='form-control selectAY' style='margin-bottom: 4px'><option>First Year</option><option>Second Year</option><option>Third Year</option><option>Fourth Year</option></select><select class='form-control selectYear' style='margin-bottom: 4px'></select><select class='form-control selectSem' style='margin-bottom: 4px'><option>First</option><option>Second</option><option>Summer</option></select><select class='form-control selectSubj' style='margin-bottom: 4px'></select><input class='form-control txtSect' style='margin-bottom: 4px' placeholder='Section'><input class='form-control txtRoom' style='margin-bottom: 4px' placeholder='Room No.'><input class='form-control txtProf' style='margin-bottom: 4px' placeholder='Professor'><input class='form-control txtSched' style='margin-bottom: 4px' placeholder='Schedule'>",
+                onOpenBefore: function () {
+                    //GET CURRENT SCHOOL YEAR
+                    var currDate = new Date();
+                    var currDateYear = currDate.getFullYear();
+                    currDateYear = currDateYear + "";
+                    currDateYear = currDateYear.substring(2, 4);
+                    this.$content.find('.selectYear').append("<option value='" + currDateYear + (parseInt(currDateYear, 10) + 1) + "'>" + currDateYear + (parseInt(currDateYear, 10) + 1) + "</option>");
+                    this.$content.find('.selectYear').append("<option value='" + (currDateYear - 1) + currDateYear + "'>" + (currDateYear - 1) + currDateYear + "</option>");
+                    var outerThis = this;
+                    //GET AVAILABLE SUBJECT CODE
+                    $.ajax({
+                        type: 'POST',
+                        url: 'adminSchedOffering.aspx/validateSchedSubj',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify({ courseCode: currentCourse }),
+                        dataType: 'json',
+                        async: false,
+                        success: function (response) {
+                            //XML pareser
+                            var text = response.d;
+                            var parser, xmlDoc;
+                            parser = new DOMParser();
+                            xmlDoc = parser.parseFromString(text, "text/xml");
+
+                            //Get Rows From XML
+                            var XMLrows = xmlDoc.getElementsByTagName("Table");
+                            for (var i = 0; i < XMLrows.length; i++) {
+                                var opt = document.createElement("option");
+                                opt.innerHTML = XMLrows[i].getElementsByTagName("subjCode")[0].innerHTML + " - " + XMLrows[i].getElementsByTagName("subjName")[0].innerHTML;
+                                opt.value = XMLrows[i].getElementsByTagName("subjID")[0].innerHTML;
+                                var selectCourse = document.getElementsByClassName("selectCourse")[0];
+                                outerThis.$content.find('.selectSubj').append(opt);
+                            }
+                        }
+                    });
+
+                    //RETRIEVE
+                    $.ajax({
+                        type: 'POST',
+                        url: 'adminSchedOffering.aspx/universalQuery',
+                        async: false,
+                        data: JSON.stringify({ SQL: "select * from tblSched where schedCode = " + id + ";" }),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        success: function (response) {
+                            var xml = document.createElement("div");
+                            xml.innerHTML = response.d;
+
+                            //XML pareser
+                            var text = response.d;
+                            var parser, xmlDoc;
+                            parser = new DOMParser();
+                            xmlDoc = parser.parseFromString(text, "text/xml");
+
+                            //Get Rows From XML
+                            var XMLrows = xmlDoc.getElementsByTagName("Table");
+                            if (XMLrows.length > 0) {
+                                outerThis.$content.find('.selectAY').val($(XMLrows[0]).find('schedAY').html());
+                                outerThis.$content.find('.selectYear').val($(XMLrows[0]).find('schedYear').html());
+                                outerThis.$content.find('.selectSem').val($(XMLrows[0]).find('schedSem').html());
+                                outerThis.$content.find('.selectSubj').val($(XMLrows[0]).find('subjID').html());
+                                outerThis.$content.find('.txtSect').val($(XMLrows[0]).find('schedSection').html());
+                                outerThis.$content.find('.txtRoom').val($(XMLrows[0]).find('schedRoom').html());
+                                outerThis.$content.find('.txtProf').val($(XMLrows[0]).find('schedProf').html());
+                                outerThis.$content.find('.txtSched').val($(XMLrows[0]).find('schedDesc').html());
+                            }
+                        },
+                        failure: function (response) {
+                            alert(response.d);
+                        }
+                    });
+                },
+                buttons: {
+                    update: {
+                        btnClass: 'btn btn-warning',
+                        action: function () {
+                            //GET VALUES
+                            var selectAY = this.$content.find('.selectAY').val();
+                            var selectYear = this.$content.find('.selectYear').val();
+                            var selectSem = this.$content.find('.selectSem').val();
+                            var selectSubj = this.$content.find('.selectSubj').val();
+                            var txtSect = this.$content.find('.txtSect').val();
+                            var txtRoom = this.$content.find('.txtRoom').val();
+                            var txtProf = this.$content.find('.txtProf').val();
+                            var txtSched = this.$content.find('.txtSched').val();
+
+                            var RemoveSQLString = "UPDATE tblSched  SET schedAY = '" + selectAY + "', schedYear = '" + selectYear + "', schedSem = '" + selectSem + "', subjID = '" + selectSubj + "', schedSection = '" + txtSect + "', schedRoom = '" + txtRoom + "', schedProf = '" + txtProf + "', schedDesc = '" + txtSched + "' WHERE schedCode = " + id + ";";
+
+                            if (updateAndInsert(RemoveSQLString) == true) {
+                                $.alert({
+                                    icon: 'fa fa-edit',
+                                    title: 'Success',
+                                    content: 'Schedule Edited!',
+                                    theme: 'modern',
+                                    type: 'orange',
+                                    buttons: {
+                                        ok: {
+                                            btnClass: 'btn btn-warning',
+                                            action: function () {
+                                                window.location.href = 'adminSchedOffering.aspx';
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                            else {
+                                $.alert('Failed');
+                            }
+                        }
+                    },
+                    cancel: {
+
+                    }
+                }
+
+            });
+        }
+        function removeUpload(year) {
+            $.alert({
+                icon: 'fa fa-remove',
+                title: 'Warning',
+                content: 'Schedule file is about to remove',
+                theme: 'modern',
+                type: 'red',
+                buttons: {
+                    ok: {
+                        btnClass: 'btn btn-danger',
+                        action: function () {
+                            window.location.href = 'adminSchedOffering.aspx';
+                            //TIMESTAMP
+                            var currDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+                            if (updateAndInsert("DELETE FROM tblSched WHERE schedAY = '" + year + "' and isUploaded = 1; INSERT INTO tblAnnounce(courseCode,announceSubj,announceDesc,announceDate) VALUES ('" + currentCourse + "','Removed Schedule','A schedule has been removed.','" + currDate + "');") == true) {
+                                window.location.href = 'adminSchedOffering.aspx';
+                            }
+                            else {
+                                $alert("error occured!");
+                            }
+                        }
+                    },
+                    cancel: {}
+                }
+            });
+        }
+
+        function removeSingle(id) {
+            $.alert({
+                icon: 'fa fa-remove',
+                title: 'Warning',
+                content: 'Schedule is about to remove',
+                theme: 'modern',
+                type: 'red',
+                buttons: {
+                    ok: {
+                        btnClass: 'btn btn-danger',
+                        action: function () {
+                            var currDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                            if (updateAndInsert("DELETE FROM tblSched WHERE schedCode = " + id + "; INSERT INTO tblAnnounce(courseCode,announceSubj,announceDesc,announceDate) VALUES ('" + currentCourse + "','Removed Schedule','A schedule has been removed.','" + currDate + "'); ") == true) {
+                                window.location.href = 'adminSchedOffering.aspx';
+                            }
+                            else {
+                                $alert("error occured!");
+                            }
+                        }
+                    },
+                    cancel: {}
+                }
+            });
+        }
+
+        function searchSched() {
+            var searchSchedCont = document.getElementById("searchSchedCont");
+            var txtSearchSched = document.getElementById("txtSearchSched").value;
+            $.ajax({
+                type: 'POST',
+                url: 'adminSchedOffering.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "select * FROM tblSched inner join tblSubj on tblSched.subjID = tblSubj.subjID where courseCode = '" + currentCourse + "' AND (tblSubj.subjName LIKE '%" + txtSearchSched + "%' OR tblSched.schedDesc LIKE '%" + txtSearchSched + "%' OR tblSched.schedProf LIKE '%" + txtSearchSched + "%' OR tblSched.schedAY LIKE '%" + txtSearchSched + "%' OR tblSched.schedSection LIKE '%" + txtSearchSched + "%')" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    if (txtSearchSched == "") {
+                        searchSchedCont.innerHTML = "<div class=\"text-muted text-center\"><br /><br /><i class=\"fa fa-file-o fa-3x\"></i><br /><br />Type a Schedule to search</div>";
+                    }
+                    else if (XMLrows.length > 0) {
+                        searchSchedCont.innerHTML = "";
+                        var tbl = document.createElement("table");
+                        tbl.className = 'table table-striped';
+                        tbl.innerHTML += "<tr><th>Subject Year</th><th>Subject Code</th><th>Subject Name</th><th>Section</th><th>Room No.</th><th>Professor</th><th>Schedule</th><th>Action</th></tr>";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            tbl.innerHTML += "<tr><td style='display: none'>" + $(XMLrows[i]).find('schedCode').html() + "</td><td>" + $(XMLrows[i]).find('schedAY').html() + "</td><td>" + $(XMLrows[i]).find('subjCode').html() + "</td><td>" + $(XMLrows[i]).find('subjName').html() + "</td><td>" + $(XMLrows[i]).find('schedSection').html() + "</td><td>" + $(XMLrows[i]).find('schedRoom').html() + "</td><td>" + $(XMLrows[i]).find('schedProf').html() + "</td><td>" + $(XMLrows[i]).find('schedDesc').html() + "</td><td><div class='btn-group'><button class='btn btn-warning' onclick=\"editSingle('" + $(XMLrows[i]).find('schedCode').html() + "')\"><i class='fa fa-edit'></i></button><button class='btn btn-danger' onclick=\"removeSingle('" + $(XMLrows[i]).find('schedCode').html() + "')\"><i class='fa fa-remove'></i></button></div></td></tr>";
+                        }
+
+                        searchSchedCont.appendChild(tbl);
+                    }
+                    else {
+                        searchSchedCont.innerHTML = "<div class='text-center text-muted'><br><br><i class='fa fa-file-o fa-3x'></i><br>No Result<br><br></div>";
+                    }
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
         }
 
     </script>

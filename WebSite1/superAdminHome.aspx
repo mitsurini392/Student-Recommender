@@ -199,6 +199,13 @@ desired effect
                                 <h3 class="box-title">Course Table</h3>
                             </div>
                             <div class="box-body">
+                                <div class="input-group input-group-sm">
+                                    <input class="form-control" type="text" placeholder="Course Code, Course Name" id="txtSearchCourse">
+                                    <span class="input-group-btn">
+                                        <button type="button" onclick="searchCourse()" class="btn btn-danger btn-flat"><i class="fa fa-search"></i></button>
+                                    </span>
+                                </div>
+                                <br />
                                 <table class="table table-striped" id="tblCourse">
                                     <tr>
                                         <th>Course Code</th>
@@ -454,11 +461,15 @@ desired effect
                 autoClose: 'ok|1000',
                 buttons: {
                     ok: {
-                        action: function () { },
+                        action: function () {
+
+                        },
                         isHidden: true,
                     }
+                },
+                onDestroy: function () {
+                    window.location.href = "superAdminHome.aspx";
                 }
-
             });
         }
 
@@ -702,14 +713,15 @@ desired effect
                     var XMLrows = xmlDoc.getElementsByTagName("Table");
 
                     if (XMLrows.length > 0) {
+                        viewAdvice.innerHTML = "";
                         for (var i = 0; i < XMLrows.length; i++) {
-                            viewAdvice.innerHTML = "<div class='box box-widget widget-user-2'>" +
+                            viewAdvice.innerHTML += "<div class='box box-widget widget-user-2'>" +
                                 "<div class='widget-user-header bg-red'>" +
-                                "<h3 class='widget-user-username'  style='margin-left: 0;'>" + XMLrows[i].getElementsByTagName("adviceName")[0].innerHTML + "</h3>" +
+                                "<h3 class='widget-user-username'  style='margin-left: 0;'>" + XMLrows[i].getElementsByTagName("adviceName")[0].innerHTML + "              <button class='btn btn-warning' onclick=\"editAdvice('" + XMLrows[i].getElementsByTagName("adviceName")[0].innerHTML + "')\"><i class='fa fa-edit'></i></button></h3>" +
                                 "</div>" +
                                 "<div class='box-footer no-padding'>" +
                                 "<ul class='nav nav-stacked'>" +
-                                retrieveTriggers(XMLrows[i].getElementsByTagName("adviceName")[0].innerHTML)+
+                                retrieveTriggers(XMLrows[i].getElementsByTagName("adviceName")[0].innerHTML) +
                                 "</ul>" +
                                 "</div>" +
                                 "</div>";
@@ -745,7 +757,19 @@ desired effect
                     if (XMLrows.length > 0) {
                         for (var i = 0; i < XMLrows.length; i++) {
                             if (XMLrows[i].getElementsByTagName("trigName")[0].innerHTML == "Subject Failed") {
-                                content += "<li><a href='#'>Subject Failed (effective only last semester): Ranges from "+XMLrows[i].getElementsByTagName("param1")[0].innerHTML+"% to "+XMLrows[i].getElementsByTagName("param2")[0].innerHTML+"% of your grade. </a></li>";
+                                content += "<li><a href='#'>Subject Failed (effective only last semester): Ranges from " + XMLrows[i].getElementsByTagName("param1")[0].innerHTML + "% to " + XMLrows[i].getElementsByTagName("param2")[0].innerHTML + "% of your grade. </a></li>";
+                            }
+
+                            if (XMLrows[i].getElementsByTagName("trigName")[0].innerHTML == "Graduating") {
+                                content += "<li><a href='#'>Graduating (If all subjects units could be taken on 1 semester)</a></li>";
+                            }
+
+                            if (XMLrows[i].getElementsByTagName("trigName")[0].innerHTML == "Returnee") {
+                                content += "<li><a href='#'>Returnee(If the student did not enroll in the current semester)</a></li>";
+                            }
+
+                            if (XMLrows[i].getElementsByTagName("trigName")[0].innerHTML == "GPA") {
+                                content += "<li><a href='#'>GPA(If the student reached " + $(XMLrows[i]).find('param1').html() + " to " + $(XMLrows[i]).find('param2').html() + " of his / her GPA</a></li>";
                             }
 
                         }
@@ -817,7 +841,7 @@ desired effect
                     "</div>" +
                     "</div>" +
                     "<div class='col-xs-6' style='float: none;display: table-cell;vertical-align: top;'>" +
-                    "<div class='text-center text-muted pad'style='background: white; width: 100%;height: 400px;'><div><br><br><br><br><i class='fa fa-file-o fa-5x'></i><br><br>No Steps Added</div><ul id='listStep' class='list-unstyled'></ul></div>" +
+                    "<div class='text-center text-muted pad'style='overflow: auto;background: white; width: 100%;height: 400px;'><div><br><br><br><br><i class='fa fa-file-o fa-5x'></i><br><br>No Steps Added</div><ul id='listStep' class='list-unstyled'></ul></div>" +
                     "</div>" +
                     "</div><button class='btn btn-success pull-right margin' id='addStep'>Add Step</button>",
                 onOpenBefore: function () {
@@ -851,6 +875,7 @@ desired effect
                         step.style.cursor = 'pointer';
                         step.innerHTML = "<div class='input-group'><span class='input-group-addon stepOrder'>1</span><textarea class='form-control stepsTextArea' rows='1' onkeyup='auto_grow(this)' style='resize: none'></textarea><span class='input-group-addon' onclick='removeStep(this)'><i class='fa fa-remove' onclick='removeStep(this)'></i></span></div>";
                         document.getElementById("listStep").previousSibling.innerHTML = "";
+
                         document.getElementById("listStep").appendChild(step);
                         //Change Steps Order
                         var stepOrder = document.getElementsByClassName("stepOrder");
@@ -912,11 +937,293 @@ desired effect
                                 success("Advice Added");
                             }
                             else {
-                                Failed("Added");
+                                failed("Added");
                             }
                         }
                     },
                     cancel: {}
+                }
+            });
+        }
+
+        function editAdvice(adviceName) {
+            $.alert({
+                title: "Edit Advice",
+                icon: "fa fa-list",
+                type: "red",
+                columnClass: "xlarge",
+                content: "<div class='row pad' style='width: 100%; background: #ECF0F5;display: table;'>" +
+                    "<div class='col-xs-6' style='float: none;display: table-cell;vertical-align: top;'>" +
+                    "<div class='form-group'>" +
+                    "<input class='form-control' placeholder='Advice Name' id='editAdviceName'/>" +
+                    "</div>" +
+                    "<div class='box box-solid'>" +
+                    "<div class='box-header' style='padding: 0px'>" +
+                    "<div class='input-group' id='trigGrad'>" +
+                    "<span class='input-group-addon'><input type='checkbox'/></span>" +
+                    "<b><input class='form-control' type='text' disabled value='Graduating'/></b>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>" +
+                    "<div class='box box-solid'>" +
+                    "<div class='box-header' style='padding: 0px'>" +
+                    "<div class='input-group' id='trigReturnee'>" +
+                    "<span class='input-group-addon'><input type='checkbox'/></span>" +
+                    "<b><input class='form-control' type='text' disabled value='Returnee'/></b>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>" +
+                    "<div class='box box-solid'>" +
+                    "<div class='box-header with-border' style='padding: 0px'>" +
+                    "<div class='input-group' id='trigGPA'>" +
+                    "<span class='input-group-addon'><input type='checkbox'/></span>" +
+                    "<b><input class='form-control' type='text' disabled value='GPA (Overall)'/></b>" +
+                    "</div>" +
+                    "</div>" +
+                    "<div class='box-body'>" +
+                    "<div class='row'><div class='col-xs-3 col-xs-offset-3'><input type='number' value='1.25' class='form-control' id='subjGPAMin'></div><div class='col-xs-3'><input value='1' type='number' class='form-control' id='subjGPAMax'></div></div><br>" +
+                    "<input type='text'  class='slider subjGPA form-control' data-slider-min='-5' data-slider-max='-1'" +
+                    "data-slider-step='.25' data-slider-value='[-1.25,-1]' data-slider-orientation='horizontal'" +
+                    "data-slider-selection='before' data-slider-tooltip='hide' data-slider-id='red'>" +
+                    "</div>" +
+                    "</div>" +
+                    "<div class='box box-solid'>" +
+                    "<div class='box-header with-border' style='padding: 0px'>" +
+                    "<div class='input-group' id='trigSubjFailed'>" +
+                    "<span class='input-group-addon'><input type='checkbox'/></span>" +
+                    "<b><input class='form-control' type='text' disabled value='Subjects Failed Percentage (effective only on last semester)'/></b>" +
+                    "</div>" +
+                    "</div>" +
+                    "<div class='box-body'>" +
+                    "<div class='row'><div class='col-xs-3 col-xs-offset-3'><div class='input-group'><input type='number' value='30' class='form-control' id='subjFailedMin'><div class='input-group-addon'>%</div></div></div><div class='col-xs-3'><div class='input-group'><input value='75' class='form-control' id='subjFailedMax'><div class='input-group-addon'>%</div></div></div></div><br>" +
+                    "<input type='text' class='slider subjFailed form-control' data-slider-min='0' data-slider-max='100'" +
+                    "data-slider-step='1' data-slider-value='[30,75]' data-slider-orientation='horizontal'" +
+                    "data-slider-selection='before' data-slider-tooltip='hide' data-slider-id='red'>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>" +
+                    "<div class='col-xs-6' style='float: none;display: table-cell;vertical-align: top;'>" +
+                    "<div class='text-center text-muted pad style='overflow: auto;background: white; width: 100%;height: 400px;'><div><br><br><br><br><i class='fa fa-file-o fa-5x'></i><br><br>No Steps Added</div><ul id='listStep' class='list-unstyled'></ul></div>" +
+                    "</div>" +
+                    "</div><button class='btn btn-success pull-right margin' id='addStep'>Add Step</button>",
+                onOpenBefore: function () {
+
+
+                    //INITIALIZED SLIDERS AND PUT THE VALUES TO A VARIABLE
+                    var subjFailed = this.$content.find(".slider.subjFailed").slider().on("slide", subjFailedSlide).data("slider");
+                    var subjGPA = this.$content.find(".slider.subjGPA").slider().on("slide", subjGPASlide).data("slider");
+
+                    //WHEN SLIDER DRAG CHANGE VALUES
+                    function subjFailedSlide() {
+                        //Change Slider
+                        document.getElementById("subjFailedMin").value = subjFailed.getValue()[0];
+                        document.getElementById("subjFailedMax").value = subjFailed.getValue()[1];
+                    }
+
+                    function subjGPASlide() {
+                        document.getElementById("subjGPAMin").value = subjGPA.getValue()[0] * -1;
+                        document.getElementById("subjGPAMax").value = subjGPA.getValue()[1] * -1;
+                    }
+
+                    //CHANGE SLIDER ON TYPE ON INPUT BOX
+                    document.getElementById("subjFailedMin").onchange = function () {
+                        subjFailed.setValue([document.getElementById("subjFailedMin").value, document.getElementById("subjFailedMax").value]);
+                    }
+                    document.getElementById("subjFailedMax").onchange = function () {
+                        subjFailed.setValue([document.getElementById("subjFailedMin").value, document.getElementById("subjFailedMax").value]);
+                    }
+
+                    document.getElementById("subjGPAMin").onchange = function () {
+                        subjGPA.setValue([parseFloat(document.getElementById("subjGPAMin").value) * -1, parseFloat(document.getElementById("subjGPAMax").value) * -1]);
+                        //subjGPA.setValue([document.getElementById("subjGPAMin").value * -1, document.getElementById("subjGPAMax").value] * -1); 
+                    }
+                    document.getElementById("subjGPAMax").onchange = function () {
+                        subjGPA.setValue([parseFloat(document.getElementById("subjGPAMin").value) * -1, parseFloat(document.getElementById("subjGPAMax").value) * -1]);
+                    }
+
+
+                    ////////////////GET VALUES
+                    $("#editAdviceName").val(adviceName);
+                    retrieveEditTrig(adviceName,
+                        document.getElementById("trigGrad"),
+                        document.getElementById("trigReturnee"),
+                        document.getElementById("trigGPA"),
+                        document.getElementById("subjGPAMin"),
+                        document.getElementById("subjGPAMax"),
+                        subjGPA,
+                        document.getElementById("trigSubjFailed"),
+                        document.getElementById("subjFailedMin"),
+                        document.getElementById("subjFailedMax"));
+
+                    retrieveEditSteps(adviceName, document.getElementById("listStep"));
+
+                    //ADD STEP EVENT
+                    document.getElementById("addStep").onclick = function () {
+                        var step = document.createElement("li");
+                        step.style.cursor = 'pointer';
+                        step.innerHTML = "<div class='input-group'><span class='input-group-addon stepOrder'>1</span><textarea class='form-control stepsTextArea' rows='1' onkeyup='auto_grow(this)' style='resize: none'></textarea><span class='input-group-addon' onclick='removeStep(this)'><i class='fa fa-remove' onclick='removeStep(this)'></i></span></div>";
+                        document.getElementById("listStep").previousSibling.innerHTML = "";
+                        document.getElementById("listStep").appendChild(step);
+                        //Change Steps Order
+                        var stepOrder = document.getElementsByClassName("stepOrder");
+                        for (var i = 0; i < stepOrder.length; i++) {
+                            stepOrder[i].innerHTML = i + 1;
+                        }
+                    }
+
+                    //MAKE SORTABLE LIST
+                    this.$content.find("#listStep").sortable({
+                        update: function (event, ui) {
+                            //Change Steps Order
+                            var stepOrder = document.getElementsByClassName("stepOrder");
+                            for (var i = 0; i < stepOrder.length; i++) {
+                                stepOrder[i].innerHTML = i + 1;
+                            }
+                        }
+                    });
+                },
+                buttons: {
+                    edit: {
+                        btnClass: "btn btn-success",
+                        action: function () {
+                            //GET ADVICE NAME
+                            var addAdviceName = $("#editAdviceName").val();
+                            var insertSQL = "BEGIN TRAN BEGIN TRY DELETE FROM tblAdvice WHERE adviceName = '" + adviceName + "'; INSERT INTO tblAdvice VALUES('" + addAdviceName + "');";
+
+                            //GET TRIGGERS
+                            var trigGrad = document.getElementById("trigGrad");
+                            var trigReturnee = document.getElementById("trigReturnee");
+                            var trigGPA = document.getElementById("trigGPA");
+                            var trigSubjFailed = document.getElementById("trigSubjFailed");
+
+                            //GET STEPS
+                            var stepsTextArea = document.getElementsByClassName("stepsTextArea");
+
+                            //CHECK TRIGGERS
+                            if (trigGrad.childNodes[0].childNodes[0].checked == true) {
+                                insertSQL += "INSERT INTO tblAdviceTrigger(adviceName,trigName) VALUES('" + addAdviceName + "','Graduating');";
+                            }
+                            if (trigReturnee.childNodes[0].childNodes[0].checked == true) {
+                                insertSQL += "INSERT INTO tblAdviceTrigger(adviceName,trigName) VALUES('" + addAdviceName + "','Returnee');";
+                            }
+                            if (trigGPA.childNodes[0].childNodes[0].checked == true) {
+                                insertSQL += "INSERT INTO tblAdviceTrigger(adviceName,trigName,param1,param2) VALUES('" + addAdviceName + "','GPA','" + document.getElementById("subjGPAMin").value + "','" + document.getElementById("subjGPAMax").value + "');";
+                            }
+                            if (trigSubjFailed.childNodes[0].childNodes[0].checked == true) {
+                                insertSQL += "INSERT INTO tblAdviceTrigger(adviceName,trigName,param1,param2) VALUES('" + addAdviceName + "','Subject Failed','" + document.getElementById("subjFailedMin").value + "','" + document.getElementById("subjFailedMax").value + "');";
+                            }
+                            //CHECK STEPS
+                            for (var i = 0; i < stepsTextArea.length; i++) {
+                                insertSQL += "INSERT INTO tblAdviceSteps VALUES('" + addAdviceName + "'," + (i + 1) + ",'" + stepsTextArea[i].value + "')";
+                            }
+
+                            insertSQL += "COMMIT END TRY BEGIN CATCH SELECT ERROR_MESSAGE() AS ErrorMessage; ROLLBACK END CATCH;";
+
+
+                            $.confirm({
+                                icon: "fa fa-exclamation",
+                                title: "Warning!",
+                                content: "<p style='color: red'>Editing an advice will reset the student's advice progress.</p>",
+                                theme: "modern",
+                                type: "red",
+                                buttons: {
+                                    ok: {
+                                        btnClass: 'btn btn-danger',
+                                        action: function () {
+                                            if (updateAndInsert(insertSQL) == true) {
+                                                success("Advice Edited");
+                                            }
+                                            else {
+                                                failed("Added");
+                                            }
+                                        }
+                                    },
+                                    back: {}
+                                }
+                            });
+                            return false;
+                        }
+                    },
+                    cancel: {
+                    },
+                }
+            });
+
+        }
+
+        function retrieveEditTrig(adviceName, gradChk, returneeChk, gpaChk, gpaMin, gpaMax, gpaSlider, subjF, subjFMin, subjFMax) {
+            $.ajax({
+                type: 'POST',
+                url: 'superAdminHome.aspx/universalQuery',
+                data: JSON.stringify({ SQL: "SELECT * FROM tblAdviceTrigger WHERE adviceName = '" + adviceName + "'" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                async: false,
+                success: function (response) {
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    for (var i = 0; i < XMLrows.length; i++) {
+                        if (XMLrows[i].getElementsByTagName("trigName")[0].innerHTML == "Graduating") {
+                            gradChk.childNodes[0].childNodes[0].checked = true;
+                        }
+                        else if (XMLrows[i].getElementsByTagName("trigName")[0].innerHTML == "Returnee") {
+                            returneeChk.childNodes[0].childNodes[0].checked = true;
+                        }
+                        else if (XMLrows[i].getElementsByTagName("trigName")[0].innerHTML == "Subject Failed") {
+                            subjF.childNodes[0].childNodes[0].checked = true;
+                        }
+                        else if (XMLrows[i].getElementsByTagName("trigName")[0].innerHTML == "GPA") {
+                            gpaChk.childNodes[0].childNodes[0].checked = true;
+                            gpaMin.value = $(XMLrows[i]).find('param1').html();
+                            gpaMax.value = $(XMLrows[i]).find('param2').html();
+                            gpaSlider.setValue([$(XMLrows[i]).find('param1').html() * -1, $(XMLrows[i]).find('param2').html() * -1]);
+                        }
+                    }
+
+                },
+                failure: function (response) {
+                    alert("Connection Failed Refresh Page");
+                }
+            });
+        }
+
+        function retrieveEditSteps(adviceName, unorderedList) {
+            $.ajax({
+                type: 'POST',
+                url: 'superAdminHome.aspx/universalQuery',
+                data: JSON.stringify({ SQL: "select * from tblAdviceSteps where adviceName = '" + adviceName + "'" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                async: false,
+                success: function (response) {
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    for (var i = 0; i < XMLrows.length; i++) {
+                        var step = document.createElement("li");
+                        step.style.cursor = 'pointer';
+                        step.innerHTML = "<div class='input-group'><span class='input-group-addon stepOrder'>" + (i + 1) + "</span><textarea class='form-control stepsTextArea' rows='1' onkeyup='auto_grow(this)' style='resize: none'>" + $(XMLrows[i]).find('adviceStepDesc').html() + "</textarea><span class='input-group-addon' onclick='removeStep(this)'><i class='fa fa-remove' onclick='removeStep(this)'></i></span></div>";
+                        unorderedList.previousSibling.innerHTML = "";
+                        unorderedList.appendChild(step);
+                        //AUTO GROW
+                        auto_grow(step.getElementsByTagName("textarea")[0]);
+                    }
+
+                },
+                failure: function (response) {
+                    alert("Connection Failed Refresh Page");
                 }
             });
         }
@@ -1040,7 +1347,49 @@ desired effect
                     this.$content.find("#editUser").val(currentAdmin);
                 }
 
-            })
+            });
+        }
+
+        function searchCourse() {
+            var txtSearchCourse = document.getElementById("txtSearchCourse").value;
+            //alert(txtSearchCourse.value);
+            //Get Table Course
+            tblCourse = document.getElementById("tblCourse");
+            //Add Header
+            tblCourse.innerHTML = "<tr><th>Course Code</th><th>Course Name</th><th>Registration Code</th><th>Registered</th></tr>"
+            $.ajax({
+                type: 'POST',
+                url: 'superAdminHome.aspx/universalQuery',
+                data: JSON.stringify({ SQL: "SELECT * FROM tblCourse WHERE courseCode LIKE '%" + txtSearchCourse + "%' OR courseName LIKE '%" + txtSearchCourse + "%'" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                async: false,
+                success: function (response) {
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    for (var i = 0; i < XMLrows.length; i++) {
+                        var row = tblCourse.insertRow(-1);
+                        var cell1 = row.insertCell(-1);
+                        cell1.innerHTML = XMLrows[i].getElementsByTagName("courseCode")[0].innerHTML;
+                        var cell2 = row.insertCell(-1);
+                        cell2.innerHTML = XMLrows[i].getElementsByTagName("courseName")[0].innerHTML;
+                        var cell3 = row.insertCell(-1);
+                        cell3.innerHTML = XMLrows[i].getElementsByTagName("courseRegCode")[0].innerHTML;
+                        var cell4 = row.insertCell(-1);
+                        cell4.innerHTML = XMLrows[i].getElementsByTagName("courseStatus")[0].innerHTML;
+                    }
+                },
+                failure: function (response) {
+                    alert("Connection Failed Refresh Page");
+                }
+            });
         }
     </script>
 </body>

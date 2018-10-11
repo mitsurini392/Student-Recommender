@@ -63,7 +63,8 @@ public partial class studentRegister : System.Web.UI.Page {
             SQLConn.con.Close();
             return true;
         }
-        catch (Exception) {
+        catch (Exception e) {
+            Debug.WriteLine(e.ToString());
             SQLConn.con.Close();
             return false;
         }

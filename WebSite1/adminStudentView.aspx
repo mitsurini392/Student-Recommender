@@ -128,9 +128,8 @@ desired effect
                     <ul class="sidebar-menu" style="font-family: 'programme_bold'">
                         <li class="header">NAVIGATION</li>
                         <!-- Optionally, you can add icons to the links -->
-                        <li><a href="adminDashboard.aspx"><i class="fa fa-bell"></i><span>Dashboard</span></a></li>
-                        <li><a href="adminAdvice.aspx"><i class="fa fa-tasks"></i><span>Advice</span></a></li>
                         <li class="active"><a href="#"><i class="fa fa-users"></i><span>Students</span></a></li>
+                        <li><a href="adminAdvice.aspx"><i class="fa fa-tasks"></i><span>Advice</span></a></li>
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-table"></i><span>Curriculum</span>
@@ -171,7 +170,8 @@ desired effect
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">All</a></li>
                         <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">By Ranking</a></li>
-                        <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">With Advice</a></li>
+                        <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">With Advice   <small class="label bg-orange" id="badgeAdvice"></small></a></li>
+                        <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Inquiring Students   <small class="label bg-orange" id="badgeInquire"></small></a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_1">
@@ -194,18 +194,29 @@ desired effect
                         <div class="tab-pane" id="tab_2">
                             <div class="row">
                                 <div class="col-lg-3" id="selectYear">
-
                                 </div>
                                 <div class="col-lg-9" id="viewYear">
-                                    
                                 </div>
                             </div>
                         </div>
                         <!-- /.tab-pane -->
                         <div class="tab-pane listStudentAdvice" id="tab_3">
-
                         </div>
                         <!-- /.tab-pane -->
+                        <div class="tab-pane listStudentAdvice" id="tab_4">
+                            <div class="box box-success">
+
+                                <div class="box-body chat" id="inquiringStudent" style="overflow: auto; width: auto; height: 500px;">
+                                    <!-- chat item -->
+                                    <div class="text-center text-muted">
+                                        <i class="fa fa-file-o fa-5x"></i>
+                                        <h3>No Inquiring Students</h3>
+                                    </div>
+                                    <!-- chat item -->
+                                </div>
+                                <!-- /.chat -->
+                            </div>
+                        </div>
                     </div>
                     <!-- /.tab-content -->
                 </div>
@@ -267,6 +278,7 @@ desired effect
             loadGrades(currentCourse, "");
             loadRanking();
             listStudentAdvice();
+            getInquireStud();
         }
 
         function loadProfile(adminUsername) {
@@ -315,7 +327,7 @@ desired effect
             setTimeout(function () {
                 var sqlSearch;
                 if (searchValue == "") {
-                    sqlSearch = "SELECT TOP 10 * FROM tblStud left join tblAdviceList on tblStud.studNo = tblAdviceList.studNo WHERE courseCode = 'BSIT' Order by advCheck desc;";
+                    sqlSearch = "SELECT TOP 10 * FROM tblStud WHERE courseCode = '" + currentCourse + "'";
                 }
                 else {
                     sqlSearch = "SELECT studNo, studFirst, studMiddle, studLast, studEmail, studContact, studPic FROM tblStud WHERE courseCode = '" + courseCode + "' AND (studNo LIKE '%" + searchValue + "%' OR studFirst LIKE '%" + searchValue + "%' OR studLast LIKE '%" + searchValue + "%')";
@@ -409,16 +421,20 @@ desired effect
                     if (XMLrows.length > 0) {
                         selectYear.innerHTML = "";
                         for (var i = 0; i < XMLrows.length; i++) {
-                            selectYear.innerHTML += "<div class='small-box bg-yellow'>" +
-                                "<div class='inner'>" +
-                                "<h4>" + numbersuffix(XMLrows[i].getElementsByTagName("studYear")[0].innerHTML) + " Year</h4>" +
-                                "<br /><br />" +
-                                "</div>" +
-                                "<div class='icon'>" +
-                                "<i class='ion ion-ios-people'></i>" +
-                                "</div>" +
-                                "<a href='#' onclick=\"viewYear('"+XMLrows[i].getElementsByTagName("studYear")[0].innerHTML+"')\" class='small-box-footer'>View Students <i class='fa fa-arrow-circle-right'></i></a>" +
-                                "</div>";
+                            try {
+                                selectYear.innerHTML += "<div class='small-box bg-yellow'>" +
+                                    "<div class='inner'>" +
+                                    "<h4>" + numbersuffix(XMLrows[i].getElementsByTagName("studYear")[0].innerHTML) + " Year</h4>" +
+                                    "<br /><br />" +
+                                    "</div>" +
+                                    "<div class='icon'>" +
+                                    "<i class='ion ion-ios-people'></i>" +
+                                    "</div>" +
+                                    "<a href='#' onclick=\"viewYear('" + XMLrows[i].getElementsByTagName("studYear")[0].innerHTML + "')\" class='small-box-footer'>View Students <i class='fa fa-arrow-circle-right'></i></a>" +
+                                    "</div>";
+                            } catch (e) {
+
+                            }
                         }
                     }
 
@@ -447,89 +463,80 @@ desired effect
                     var XMLrows = xmlDoc.getElementsByTagName("Table");
 
                     if (XMLrows.length > 0) {
-                       content = "<table class='table table-striped'>" +
-                                "<tr><th>Rank</th><th>Student No.</th><th>Name</th><th>Section</th><th>GPA</th><th>Grades</th></tr>";
+                        content = "<table class='table table-striped'>" +
+                            "<tr><th>Rank</th><th>Student No.</th><th>Name</th><th>Section</th><th>GPA</th><th>Grades</th></tr>";
                         for (var i = 0; i < XMLrows.length; i++) {
-                            content += "<tr><td>"+(i+1)+"</td><td>" + XMLrows[i].getElementsByTagName("studNo")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("studFirst")[0].innerHTML + " " + XMLrows[i].getElementsByTagName("studMiddle")[0].innerHTML + " " + XMLrows[i].getElementsByTagName("studMiddle")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("StudSec")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("gradesGrade")[0].innerHTML.substring(0,4) + "</td><td><button class='btn btn-warning margin' onclick=\"viewGrades('"+XMLrows[i].getElementsByTagName("studNo")[0].innerHTML+"')\">Grades</button></td></tr>";
+                            content += "<tr><td>" + (i + 1) + "</td><td>" + XMLrows[i].getElementsByTagName("studNo")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("studFirst")[0].innerHTML + " " + XMLrows[i].getElementsByTagName("studMiddle")[0].innerHTML + " " + XMLrows[i].getElementsByTagName("studLast")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("StudSec")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("gradesGrade")[0].innerHTML.substring(0, 4) + "</td><td><button class='btn btn-warning margin' onclick=\"viewGrades('" + XMLrows[i].getElementsByTagName("studNo")[0].innerHTML + "')\">Grades</button></td></tr>";
                         }
                         viewYear.innerHTML = content;
                     }
 
                 }
             });
-            
+
         }
 
         function listStudentAdvice() {
             var listStudentAdvice = document.getElementsByClassName("listStudentAdvice")[0];
             $.ajax({
-                    type: 'POST',
-                    url: 'adminStudentView.aspx/universalQuery',
-                    contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify({ SQL: "SELECT * FROM tblAdviceList inner join tblStud on tblStud.studNo = tblAdviceList.studNo WHERE courseCode = '" + currentCourse + "'" }),
-                    dataType: 'json',
-                    success: function (response) {
-                        //XML pareser
-                        var text = response.d;
-                        var parser, xmlDoc;
-                        parser = new DOMParser();
-                        xmlDoc = parser.parseFromString(text, "text/xml");
+                type: 'POST',
+                url: 'adminStudentView.aspx/universalQuery',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ SQL: "SELECT * FROM tblStud WHERE studNo IN (select studNo FROM tblAdviceList WHERE advCheck = 0) AND courseCode = '" + currentCourse + "'" }),
+                dataType: 'json',
+                success: function (response) {
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
 
-                        //Get Rows From XML
-                        var XMLrows = xmlDoc.getElementsByTagName("Table");
-                        if (XMLrows.length > 0) {
-                            var studTable = document.createElement("table");
-                            studTable.className = "table table-striped";
-                            studTable.innerHTML = "";
-                            studTable.innerHTML = "<tr><th>Student Pic.</th><th>Student No.</th><th>Student Name</th><th>Contact</th><th>Email</th><th class='text-center'>View</th></tr>";
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    if (XMLrows.length > 0) {
+                        document.getElementById("badgeAdvice").innerHTML = XMLrows.length;
+                        var studTable = document.createElement("table");
+                        studTable.className = "table table-striped";
+                        studTable.innerHTML = "";
+                        studTable.innerHTML = "<tr><th>Student Pic.</th><th>Student No.</th><th>Student Name</th><th>Contact</th><th>Email</th><th class='text-center'>View</th></tr>";
 
-                            for (var i = 0; i < XMLrows.length; i++) {
-                                var studNo = XMLrows[i].getElementsByTagName("studNo")[0].innerHTML;
-                                var studFirst = XMLrows[i].getElementsByTagName("studFirst")[0].innerHTML;
-                                var studMiddle = XMLrows[i].getElementsByTagName("studMiddle")[0].innerHTML;
-                                var studLast = XMLrows[i].getElementsByTagName("studLast")[0].innerHTML;
-                                var studEmail = XMLrows[i].getElementsByTagName("studEmail")[0].innerHTML;
-                                var studContact = XMLrows[i].getElementsByTagName("studContact")[0].innerHTML;
-                                var studPic = XMLrows[i].getElementsByTagName("studPic")[0].innerHTML;
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var studNo = XMLrows[i].getElementsByTagName("studNo")[0].innerHTML;
+                            var studFirst = XMLrows[i].getElementsByTagName("studFirst")[0].innerHTML;
+                            var studMiddle = XMLrows[i].getElementsByTagName("studMiddle")[0].innerHTML;
+                            var studLast = XMLrows[i].getElementsByTagName("studLast")[0].innerHTML;
+                            var studEmail = XMLrows[i].getElementsByTagName("studEmail")[0].innerHTML;
+                            var studContact = XMLrows[i].getElementsByTagName("studContact")[0].innerHTML;
+                            var studPic = XMLrows[i].getElementsByTagName("studPic")[0].innerHTML;
 
-                                var row = studTable.insertRow(-1);
-                                var cell0 = row.insertCell(-1);
-                                var cell1 = row.insertCell(-1);
-                                var cell2 = row.insertCell(-1);
-                                var cell3 = row.insertCell(-1);
-                                var cell4 = row.insertCell(-1);
-                                var cell5 = row.insertCell(-1);
+                            var row = studTable.insertRow(-1);
+                            var cell0 = row.insertCell(-1);
+                            var cell1 = row.insertCell(-1);
+                            var cell2 = row.insertCell(-1);
+                            var cell3 = row.insertCell(-1);
+                            var cell4 = row.insertCell(-1);
+                            var cell5 = row.insertCell(-1);
 
-                                cell0.innerHTML = "<img src='" + studPic + "' height='50px'></img>";
-                                cell1.innerHTML = studNo;
-                                cell2.innerHTML = studLast + ", " + studFirst + " " + studMiddle;
-                                cell3.innerHTML = studContact;
-                                cell4.innerHTML = studEmail;
-                                cell5.className = 'text-center';
-                                cell5.innerHTML = "<button class='btn btn-warning margin' onclick=\"viewGrades('" + studNo + "')\">Grades</button>";
+                            cell0.innerHTML = "<img src='" + studPic + "' height='50px'></img>";
+                            cell1.innerHTML = studNo;
+                            cell2.innerHTML = studLast + ", " + studFirst + " " + studMiddle;
+                            cell3.innerHTML = studContact;
+                            cell4.innerHTML = studEmail;
+                            cell5.className = 'text-center';
+                            cell5.innerHTML = "<button class='btn btn-warning margin' onclick=\"viewGrades('" + studNo + "')\">Grades</button><button class='btn btn-warning margin' onclick='viewAdvice(this)'>Advice</button>";
 
-                                try {
-                                    if (XMLrows[i].getElementsByTagName("advCheck")[0].innerHTML == "0") {
-                                        row.style.background = "#e67e22";
-                                        row.style.color = "white";
-                                        cell5.innerHTML += "<button class='btn btn-warning margin' onclick='viewAdvice(this)'>Advice</button>";
-                                    }
-                                } catch (e) {
-                                    //CONTINUE
-                                }
-
-                                listStudentAdvice.appendChild(studTable);
-                            }
+                            listStudentAdvice.appendChild(studTable);
                         }
-                        else {
-                            studTable.innerHTML = "<div class='text-center text-muted'><br><br><br><i class='fa fa-question fa-5x'></i><h2>No Records Found</h2><br><br><br><br><br><br></div>";
-
-                        }
-                    },
-                    failure: function (response) {
-                        alert("Connection Failed Refresh Page");
                     }
-                });
+                    else {
+                        studTable.innerHTML = "<div class='text-center text-muted'><br><br><br><i class='fa fa-question fa-5x'></i><h2>No Records Found</h2><br><br><br><br><br><br></div>";
+
+                    }
+                },
+                failure: function (response) {
+                    alert("Connection Failed Refresh Page");
+                }
+            });
         }
 
         function viewAdvice(elem) {
@@ -576,7 +583,7 @@ desired effect
                         action: function () {
                             var currentAdviceName = this.$content.find("#currentAdviceName").html();
                             if (currentAdviceName == undefined) {
-                                $.alert('Select an Advice to edit before validating.');
+                                $.alert('Select an Advice before validating.');
                                 return false;
                             }
                             var adviceChecks = this.$content.find("input[type=checkbox]");
@@ -586,6 +593,7 @@ desired effect
                                     SQL += "INSERT INTO tblAdviceListSteps VALUES('" + studNo + "','" + currentAdviceName + "','" + (i + 1) + "');";
                                 }
                             }
+                            SQL += "UPDATE tblAdviceList SET advCheck = 1 WHERE studNo = '" + studNo + "'";
                             //INSERT
                             $.ajax({
                                 type: 'POST',
@@ -1028,6 +1036,76 @@ desired effect
             }
             return i + "th";
         }
+
+        function getInquireStud() {
+            $.ajax({
+                type: 'POST',
+                url: 'adminDashboard.aspx/universalQuery',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ SQL: "SELECT * FROM tblNotifs inner join tblStud on tblNotifs.studNo = tblstud.studNo WHERE notified = '0' AND courseCode = '" + currentCourse + "'  " }),
+                dataType: 'json',
+                success: function (response) {
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    if (XMLrows.length > 0) {
+                        document.getElementById("badgeInquire").innerHTML = XMLrows.length;
+                        inquiringStudent = document.getElementById("inquiringStudent");
+                        inquiringStudent.innerHTML = "";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var notifDate = new Date(XMLrows[i].getElementsByTagName("notifDate")[0].innerHTML);
+                            notifDate = (notifDate.getMonth() + 1) + '/' + notifDate.getDate() + '/' + notifDate.getFullYear();
+                            inquiringStudent.innerHTML += "<div class='item'>" +
+                                "<img src='" + XMLrows[i].getElementsByTagName("studPic")[0].innerHTML + "' alt='user image' class='online'>" +
+                                "<p class='message'>" +
+                                "<a href='#' class='name'>" +
+                                "<small class='text-muted pull-right'><i class='fa fa-calendar-o'></i> " + notifDate + "</small>" +
+                                XMLrows[i].getElementsByTagName("studFirst")[0].innerHTML + " " + XMLrows[i].getElementsByTagName("studMiddle")[0].innerHTML + " " + XMLrows[i].getElementsByTagName("studLast")[0].innerHTML +
+                                "</a>" +
+                                XMLrows[i].getElementsByTagName("notifDesc")[0].innerHTML + " <a href='#' onclick=\"notifiedStud(" + XMLrows[i].getElementsByTagName("notifCode")[0].innerHTML + ")\"><u>Done</u></a>" +
+                                "</p>" +
+                                "</div>";
+                        }
+                    }
+                },
+                failure: function (response) {
+                    alert("Connection Failed Refresh Page");
+                }
+            });
+        }
+
+        function notifiedStud(id) {
+            $.confirm({
+                title: "Alert",
+                buttons: {
+                    ok: {
+                        action: function () {
+                            $.ajax({
+                                type: 'POST',
+                                url: 'adminDashboard.aspx/universalQuery',
+                                contentType: 'application/json; charset=utf-8',
+                                data: JSON.stringify({ SQL: "UPDATE tblNotifs SET notified = 1 WHERE notifCode = " + id + ";" }),
+                                dataType: 'json',
+                                success: function (response) {
+                                    //INSERT HAS NO RETURN       
+                                    window.location.href = "adminStudentView.aspx";
+                                },
+                                failure: function (response) {
+                                    alert("Connection Failed Refresh Page");
+                                }
+                            });
+                        }
+                    },
+                    cancel: {}
+                }
+            });
+        }
+         
 
     </script>
 </body>

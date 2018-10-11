@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>AdminLTE 2 | Top Navigation</title>
+    <title>Student Recommender | Student Home</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.6 -->
@@ -49,14 +49,46 @@
 
         <header class="main-header">
             <nav class="navbar navbar-static-top">
-                <div class="container">
+                <%--<div class="container">
                     <div class="navbar-header">
                         <a href="../../index2.html" class="navbar-brand"><b>Student </b>Recommender</a>
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
                             <i class="fa fa-bars"></i>
                         </button>
                     </div>
-
+                    <div class="collapse navbar-collapse pull-left">
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown messages-menu">
+                                <!-- Menu toggle button -->
+                                <a href="#" onclick="readAnnoun()" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                    <i class="fa fa-envelope-o"></i>
+                                    <span class="label label-danger" id="announNum"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="header">You have unread announcement</li>
+                                    <li>
+                                        <!-- inner menu: contains the messages -->
+                                        <ul class="menu" id="viewAnnoun">
+                                            <li>
+                                                <a href="#">
+                                                    <div class="pull-left">
+                                                        <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                                    </div>
+                                                    <h4>Support Team
+                          <small><i class="fa fa-clock-o"></i>5 mins</small>
+                                                    </h4>
+                                                    <p>Why not buy a new awesome theme?</p>
+                                                </a>
+                                            </li>
+                                            <!-- end message -->
+                                        </ul>
+                                        <!-- /.menu -->
+                                    </li>
+                                    <li class="footer"><a href="#">See All Announcement</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse pull-right" id="navbar-collapse">
                         <form runat="server">
@@ -66,6 +98,66 @@
                             </ul>
                         </form>
                     </div>
+                </div>--%>
+                <div class="container">
+                    <div class="navbar-header">
+                        <a href="#" class="navbar-brand"><b>Student </b>Recommender</a>
+                        <%--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <i class="fa fa-bars"></i>
+          </button>--%>
+                    </div>
+
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
+                    </div>
+                    <!-- /.navbar-collapse -->
+                    <!-- Navbar Right Menu -->
+                    <div class="navbar-custom-menu">
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a href="#" onclick="viewAllGrades()"><i class="fa fa-list-ul"></i></a>
+                            </li>
+                            <!-- Messages: style can be found in dropdown.less-->
+                            <li class="dropdown messages-menu">
+                                <!-- Menu toggle button -->
+                                <a href="#" onclick="readAnnoun()" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                    <i class="fa fa-envelope-o"></i>
+                                    <span class="label label-danger" id="announNum"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="header">You have unread announcement</li>
+                                    <li>
+                                        <!-- inner menu: contains the messages -->
+                                        <ul class="menu" id="viewAnnoun">
+                                            <li>
+                                                <a href="#">
+                                                    <div class="pull-left">
+                                                        <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                                    </div>
+                                                    <h4>Support Team
+                          <small><i class="fa fa-clock-o"></i>5 mins</small>
+                                                    </h4>
+                                                    <p>Why not buy a new awesome theme?</p>
+                                                </a>
+                                            </li>
+                                            <!-- end message -->
+                                        </ul>
+                                        <!-- /.menu -->
+                                    </li>
+                                    <li class="footer"><a href="#">See All Announcement</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <form runat="server">
+                                    <ul class="nav navbar-nav">
+                                        <li>
+                                            <asp:LinkButton OnClick="btnLogout_Click" runat="server" ID="btnLogout"><i class="fa fa-sign-out"></i></asp:LinkButton></li>
+                                    </ul>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- /.navbar-custom-menu -->
                 </div>
                 <!-- /.container-fluid -->
             </nav>
@@ -296,6 +388,7 @@
             loadPetitions(currentStudentNo);
             loadClassifAve(currentStudentNo, currentCurr);
             loadAdvicesList();
+            viewAnnoun();
             //systemTutorial();
         }
 
@@ -307,7 +400,7 @@
             var LoadAdvicesContainer = document.getElementById("LoadAdvicesContainer").parentNode;
             var anno1 = new Anno([{
                 target: profileContainer,
-                content: 'Write Something',
+                content: "<img style='position: absolute;margin-left:-55px;margin-top: 40px;' height='100px' src='https://i.imgur.com/rjjl2ir.jpg'></img>Oni-chans can edit their profile picture desu~",
                 position: 'right',
             }, {
                 target: predictionContainer,
@@ -373,10 +466,14 @@
                             //}
                             var row = adviceTable.insertRow(-1);
                             row.innerHTML = "<td class='text-center' disabled >Unfinished</td><td>" + XMLrows[i].getElementsByTagName("advType")[0].innerHTML + "</td><td>" + getAdviceStep(XMLrows[i].getElementsByTagName("advType")[0].innerHTML)[0].substring(0, 60) + "....</td><td><button class='btn bg-purple' onclick=\"getStudAdvProg(this,'" + currentStudentNo + "','" + currentCourse + "','" + $("#profileUser").html() + "')\">View</button></td>";
-                            //Change status if completed
+                            //Change status if completed                           
                             if (checkCompleteAdvice(XMLrows[i].getElementsByTagName("advType")[0].innerHTML, currentStudentNo) == true) {
                                 row.childNodes[0].innerHTML = "Finished (Pending Verification)";
+                                if (checkAdvValidation(currentStudentNo) == true) {
+                                    row.childNodes[0].innerHTML = "<p style='color: green'>Completed</p>";
+                                }
                             }
+
                         }
                     }
                 },
@@ -384,6 +481,35 @@
                     alert(response.d);
                 }
             });
+        }
+        function checkAdvValidation(studNo) {
+            var isValidated = false;
+            $.ajax({
+                type: 'POST',
+                url: 'studentHome.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "SELECT * FROM tblAdviceList WHERE studNo = '" + studNo + "'" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    if (XMLrows[0].getElementsByTagName("advCheck")[0].innerHTML == "1") {
+                        isValidated = true;
+                    }
+                }
+            });
+            return isValidated;
         }
 
         function checkNotif(studNo) {
@@ -1134,8 +1260,21 @@
                     if (XMLrows.length > 0) {
                         for (var i = 0; i < XMLrows.length; i++) {
                             //Check Subj Failed Percentage
-                            if (XMLrows[0].getElementsByTagName("trigName")[0].innerHTML == "Subject Failed") {
+                            if (XMLrows[i].getElementsByTagName("trigName")[0].innerHTML == "Subject Failed") {
                                 if (subjFailed(currentStudentNo, XMLrows[0].getElementsByTagName("param1")[0].innerHTML, XMLrows[0].getElementsByTagName("param2")[0].innerHTML) == false) {
+                                    matched = false;
+                                    break;
+                                }
+                            }
+                            else if (XMLrows[i].getElementsByTagName("trigName")[0].innerHTML == "Returnee") {
+                                if (returnee(currentStudentNo) == false) {
+                                    matched = false;
+                                    break;
+                                }
+                            }
+
+                            else if (XMLrows[i].getElementsByTagName("trigName")[0].innerHTML == "GPA") {
+                                if (gpa(currentStudentNo, XMLrows[i].getElementsByTagName("param1")[0].innerHTML, XMLrows[i].getElementsByTagName("param2")[0].innerHTML) == false) {
                                     matched = false;
                                     break;
                                 }
@@ -1624,6 +1763,235 @@
             });
         }
 
+        var readAnnounSQL = "";
+        var readAnnounFlag = false;
+
+        function viewAnnoun() {
+            var viewAnnoun = document.getElementById("viewAnnoun");
+            viewAnnoun.innerHTML = "";
+            $.ajax({
+                type: 'POST',
+                url: 'studentHome.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "SELECT CAST(CASE WHEN announceCode NOT IN (SELECT announceCode FROM tblAnnounceCheck WHERE studNo = '" + currentStudentNo + "')THEN 0 ELSE 1 END AS int) as seen, * FROM tblAnnounce WHERE courseCode = '" + currentCourse + "' order by seen asc, announceDate desc" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    if (XMLrows.length > 0) {
+                        var countUnread = 0;
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            //CONVERT TIME MINUTES
+                            var announDate = new Date($(XMLrows[i]).find('announceDate').html());
+                            var h = announDate.getHours();
+                            var m = announDate.getMinutes();
+
+                            if ($(XMLrows[i]).find('seen').html() == '0') {
+                                viewAnnoun.innerHTML += "<li style='background: #EDF2FA'>" +
+                                    "<a href='#'>" +
+                                    "<div class='pull-left'>" +
+                                    "<img src='../../dist/img/user2-160x160.jpg' class='img-circle' alt='User Image'>" +
+                                    "</div>" +
+                                    "<h4>" +
+                                    $(XMLrows[i]).find("announceSubj").html() +
+                                    "<small><i class='fa fa-clock-o'></i>" + h + ":" + m + "</small>" +
+                                    "</h4>" +
+                                    "<p>" + $(XMLrows[i]).find('announceDesc').html() + "</p>" +
+                                    "</a>" +
+                                    "</li>";
+                                readAnnounSQL += "INSERT INTO tblAnnounceCheck(announceCode,studNo) VALUES (" + $(XMLrows[i]).find("announceCode").html() + ",'" + currentStudentNo + "') ";
+
+                                countUnread++;
+                            }
+                            else {
+                                viewAnnoun.innerHTML += "<li>" +
+                                    "<a href='#'>" +
+                                    "<div class='pull-left'>" +
+                                    "<img src='../../dist/img/user2-160x160.jpg' class='img-circle' alt='User Image'>" +
+                                    "</div>" +
+                                    "<h4>" +
+                                    $(XMLrows[i]).find("announceSubj").html() +
+                                    "<small><i class='fa fa-clock-o'></i>" + h + ":" + m + "</small>" +
+                                    "</h4>" +
+                                    "<p>" + $(XMLrows[i]).find('announceDesc').html() + "</p>" +
+                                    "</a>" +
+                                    "</li>";
+                            }
+                        }
+                        if (countUnread > 0) {
+                            $(announNum).html(countUnread);
+                        }
+                    }
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function readAnnoun() {
+            if (readAnnounFlag == false) {
+                //TANGGALIN ANG NUMBER SA ANNOUN
+                $(announNum).html("");
+                //INSERT UNG MGA D PA NABABASA
+                if (updateAndInsert(readAnnounSQL) == true) {
+                    //SUCCESS
+                }
+                readAnnounFlag = true;
+            }
+            else {
+                //NABASA NA
+            }
+        }
+
+        function viewAllGrades() {
+            $.confirm({
+                icon: 'fa fa-list-ul',
+                title: "View Grades",
+                content: "",
+                type: "purple",
+                columnClass: "col-lg-12",
+                theme: "supervan",
+                buttons: {
+                    close: {}
+                },
+                onOpenBefore: function () {
+                    var outerThis = this;
+                    ////////////////////////////////GET ALL GRADES
+                    $.ajax({
+                        type: 'POST',
+                        url: 'adminStudentView.aspx/universalQuery',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify({ SQL: "Select *  from tblSubj Where currCode = '" + currentCurr + "' order by subjYear desc,subjSem desc" }),
+                        dataType: 'json',
+                        async: false,
+                        success: function (response) {
+                            //Create Content;
+                            var content = "";
+                            //XML pareser
+                            var text = response.d;
+                            var parser, xmlDoc;
+                            parser = new DOMParser();
+                            xmlDoc = parser.parseFromString(text, "text/xml");
+
+                            //Get Rows From XML
+                            var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                            for (var i = 0; i < XMLrows.length; i++) {
+                                var strSem;
+                                var grade = getSubjGrade(currentStudentNo, XMLrows[i].getElementsByTagName("subjID")[0].innerHTML);
+                                //Change GRADE STATUS COLOR
+                                var gradeStatColor = "";
+                                if (grade[1] == "P") {
+                                    gradeStatColor = "blue";
+                                }
+                                else if (grade[1] == "F") {
+                                    gradeStatColor = "red";
+                                }
+                                else if (grade[1] == "None") {
+                                    gradeStatColor = "green";
+                                }
+                                else {
+                                    gradeStatColor = "gray";
+                                }
+
+                                //Change SEMESTER NAMES
+                                if (XMLrows[i].getElementsByTagName("subjSem")[0].innerHTML == "1") {
+                                    strSem = "First";
+                                }
+                                else if (XMLrows[i].getElementsByTagName("subjSem")[0].innerHTML == "2") {
+                                    strSem = "Second";
+                                }
+                                else if (XMLrows[i].getElementsByTagName("subjSem")[0].innerHTML == "3") {
+                                    strSem = "Summer";
+                                }
+                                if (i - 1 < 0) {
+                                    //Start Creating Box
+                                    content += "<div class='box box-warning' style='margin-top: 10px'> <div class='box-header'><h3 class='box-title'>" + numbersuffix(XMLrows[i].getElementsByTagName("subjYear")[0].innerHTML) + " Year</h3></div><div class='box-body'><table class='table table-striped'><tr style='color: black'><th>Subject Code</th><th>Subject Name</th><th>Subject Units</th><th>Semester</th><th>Final Grade</th><th>Grade Status</th></tr>";
+                                    content += "<tr style='color: " + gradeStatColor + "'><td>" + XMLrows[i].getElementsByTagName("subjCode")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("subjName")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("subjUnits")[0].innerHTML + "</td><td>" + strSem + "</td><td>" + grade[0] + "</td><td>" + grade[1] + "</td></tr>";
+                                }
+                                else if (XMLrows[i].getElementsByTagName("subjYear")[0].innerHTML != XMLrows[i - 1].getElementsByTagName("subjYear")[0].innerHTML) {
+                                    //End Box
+                                    content += "</table></div></div>";
+                                    //Start Box
+                                    content += "<div class='box box-warning'> <div class='box-header'><h3 class='box-title'>" + numbersuffix(XMLrows[i].getElementsByTagName("subjYear")[0].innerHTML) + " Year</h3></div><div class='box-body'><table class='table table-striped'><tr style='color: black'><th>Subject Code</th><th>Subject Name</th><th>Subject Units</th><th>Semester</th><th>Final Grade</th><th>Grade Status</th></tr>";
+                                    content += "<tr style='color: " + gradeStatColor + "'><td>" + XMLrows[i].getElementsByTagName("subjCode")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("subjName")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("subjUnits")[0].innerHTML + "</td><td>" + strSem + "</td><td>" + grade[0] + "</td><td>" + grade[1] + "</td></tr>";
+                                }
+                                else {
+                                    content += "<tr style='color: " + gradeStatColor + "'><td>" + XMLrows[i].getElementsByTagName("subjCode")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("subjName")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("subjUnits")[0].innerHTML + "</td><td>" + strSem + "</td><td>" + grade[0] + "</td><td>" + grade[1] + "</td></tr>";
+                                }
+                            }
+                            outerThis.setContentAppend(content);
+                        },
+                        failure: function (response) {
+                            alert("Connection Failed Refresh Page");
+                        }
+                    });
+                }
+            });
+        }
+
+        function getSubjGrade(studNo, subjID) {
+            var subjGrade = [];
+            $.ajax({
+                type: 'POST',
+                url: 'adminStudentView.aspx/universalQuery',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ SQL: "SELECT gradesGrade,gradesStatus FROM tblGrades WHERE studNo = '" + studNo + "' AND subjID = '" + subjID + "' order by gradesYear desc, gradesSem desc;" }),
+                dataType: 'json',
+                async: false,
+                success: function (response) {
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    if (XMLrows.length > 0) {
+                        subjGrade.push(XMLrows[0].getElementsByTagName("gradesGrade")[0].innerHTML);
+                        subjGrade.push(XMLrows[0].getElementsByTagName("gradesStatus")[0].innerHTML);
+                    } else {
+                        subjGrade.push("None");
+                        subjGrade.push("None");
+                    }
+
+                },
+                failure: function (response) {
+                    alert("Connection Failed Refresh Page");
+                }
+            });
+            return subjGrade;
+        }
+
+                //Get Number Suffix
+        function numbersuffix(i) {
+            var j = i % 10,
+                k = i % 100;
+            if (j == 1 && k != 11) {
+                return i + "st";
+            }
+            if (j == 2 && k != 12) {
+                return i + "nd";
+            }
+            if (j == 3 && k != 13) {
+                return i + "rd";
+            }
+            return i + "th";
+        }
     </script>
 </body>
 </html>

@@ -75,7 +75,7 @@ public partial class adminSchedOffering : System.Web.UI.Page {
 
         SQLConn.con.Close();
         SQLConn.con.Open();
-        SqlCommand cmd = new SqlCommand("select distinct schedAY , schedYear, schedSem from tblSched where courseCode = '" + courseCode+"'", SQLConn.con);
+        SqlCommand cmd = new SqlCommand("select distinct schedAY , schedYear, schedSem from tblSched where courseCode = '" + courseCode+"' AND isUploaded = 1", SQLConn.con);
 
         SqlDataAdapter adapter = new SqlDataAdapter(cmd);
 
@@ -93,7 +93,7 @@ public partial class adminSchedOffering : System.Web.UI.Page {
 
         SQLConn.con.Close();
         SQLConn.con.Open();
-        SqlCommand cmd = new SqlCommand("select subjCode,subjName,schedYear,schedAY,schedSem,schedSection,schedRoom,schedProf,schedDesc From tblSched INNER JOIN tblSubj ON tblSubj.subjID = tblSched.subjID where schedAY = '"+schedAY+"' and schedYear = '"+schedYear+"' and schedSem = '"+schedSem+"' and courseCode = '"+courseCode+ "' ORDER BY subjName ASC", SQLConn.con);
+        SqlCommand cmd = new SqlCommand("select subjCode,subjName,schedYear,schedAY,schedSem,schedSection,schedRoom,schedProf,schedDesc From tblSched INNER JOIN tblSubj ON tblSubj.subjID = tblSched.subjID where schedAY = '"+schedAY+"' and schedYear = '"+schedYear+"' and schedSem = '"+schedSem+"' and courseCode = '"+courseCode+ "' and isUploaded = 1 ORDER BY subjName ASC", SQLConn.con);
 
         SqlDataAdapter adapter = new SqlDataAdapter(cmd);
 
@@ -160,6 +160,24 @@ public partial class adminSchedOffering : System.Web.UI.Page {
         SQLConn.con.Close();
 
         return ds.GetXml();
+    }
+
+    [System.Web.Services.WebMethod]
+    public static string universalQuery(string SQL) {
+
+        SQLConn.con.Close();
+        SQLConn.con.Open();
+        SqlCommand cmd = new SqlCommand(SQL, SQLConn.con);
+
+        SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+
+        var ds = new DataSet();
+        adapter.Fill(ds);
+
+        SQLConn.con.Close();
+
+        return ds.GetXml();
+
     }
 
     protected void btnLogout_Click(object sender, EventArgs e) {
