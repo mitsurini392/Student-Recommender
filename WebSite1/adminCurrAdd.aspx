@@ -125,9 +125,9 @@ desired effect
                     <ul class="sidebar-menu" style="font-family: 'programme_bold'">
                         <li class="header">NAVIGATION</li>
                         <!-- Optionally, you can add icons to the links -->
+                        <li><a href="adminStudentView.aspx"><i class="fa fa-users"></i><span>Students</span></a></li>
                         <li><a href="adminAdvice.aspx"><i class="fa fa-tasks"></i><span>Advice</span></a></li>
                         <%--<li><a href="#"><i class="fa fa-bell"></i><span>Notification</span></a></li>--%>
-                        <li><a href="adminStudentView.aspx"><i class="fa fa-users"></i><span>Students</span></a></li>
                         <li class="treeview active menu-open">
                             <a href="#">
                                 <i class="fa fa-table"></i><span>Curriculum</span>

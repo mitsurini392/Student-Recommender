@@ -119,9 +119,9 @@ desired effect
                     <ul class="sidebar-menu" style="font-family: 'programme_bold'">
                         <li class="header">NAVIGATION</li>
                         <!-- Optionally, you can add icons to the links -->
-                        <li class="active"><a href="#"><i class="fa fa-tasks"></i><span>Advice</span></a></li>
-                        <%--<li><a href="#"><i class="fa fa-bell"></i><span>Notification</span></a></li>--%>
                         <li><a href="adminStudentView.aspx"><i class="fa fa-users"></i><span>Students</span></a></li>
+                        <li class="active"><a href="#"><i class="fa fa-tasks"></i><span>Advice</span></a></li>
+                        <%--<li><a href="#"><i class="fa fa-bell"></i><span>Notification</span></a></li>--%>                      
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-table"></i><span>Curriculum</span>
@@ -134,7 +134,7 @@ desired effect
                                 <li><a href="adminCurrAdd.aspx"><i class="fa fa-plus"></i>Add </a></li>
                             </ul>
                         </li>
-                        <li><a href="#"><i class="fa fa-clock-o"></i><span>Schedule Offering</span></a></li>
+                        <li><a href="adminSchedOffering.aspx"><i class="fa fa-clock-o"></i><span>Schedule Offering</span></a></li>
                         <li><a href="adminEnrollSched.aspx"><i class="fa fa-calendar-plus-o"></i><span>Event Date</span></a></li>
                         <li><a href="adminPetitionList.aspx"><i class="fa fa-list"></i><span>Petition Subject</span></a></li>
                         <br />
