@@ -236,7 +236,8 @@ public partial class studentHome : System.Web.UI.Page {
         }
         catch (Exception e)
         {
-            return e.ToString();
+            Debug.Print(e.ToString());
+            return e.ToString();          
             throw;
         }
 

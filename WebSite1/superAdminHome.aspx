@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>AdminLTE 2 | Starter</title>
+    <title>Super Admin | SABRS</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.6 -->
@@ -81,7 +81,7 @@ desired effect
                 <!-- mini logo for sidebar mini 50x50 pixels -->
                 <span class="logo-mini"><b>S</b>R</span>
                 <!-- logo for regular state and mobile devices -->
-                <span class="logo-lg" style="font-size: 80%"><b>Student&nbspRecommender&nbsp</span>
+                <span class="logo-lg" style="font-size: 80%"><b>Student Recommender&nbsp</span>
             </a>
 
             <!-- Header Navbar -->
@@ -717,7 +717,7 @@ desired effect
                         for (var i = 0; i < XMLrows.length; i++) {
                             viewAdvice.innerHTML += "<div class='box box-widget widget-user-2'>" +
                                 "<div class='widget-user-header bg-red'>" +
-                                "<h3 class='widget-user-username'  style='margin-left: 0;'>" + XMLrows[i].getElementsByTagName("adviceName")[0].innerHTML + "              <button class='btn btn-warning' onclick=\"editAdvice('" + XMLrows[i].getElementsByTagName("adviceName")[0].innerHTML + "')\"><i class='fa fa-edit'></i></button></h3>" +
+                                "<h3 class='widget-user-username'  style='margin-left: 0;'>" + XMLrows[i].getElementsByTagName("adviceName")[0].innerHTML + "              <div class='btn-group'><button class='btn btn-warning' onclick=\"editAdvice('" + XMLrows[i].getElementsByTagName("adviceName")[0].innerHTML + "')\"><i class='fa fa-edit'></i></button><button class='btn btn-danger' onclick=\"removeAdvice('" + XMLrows[i].getElementsByTagName("adviceName")[0].innerHTML + "')\"><i class='fa fa-remove'></i></button></div></h3>" +
                                 "</div>" +
                                 "<div class='box-footer no-padding'>" +
                                 "<ul class='nav nav-stacked'>" +
@@ -1226,6 +1226,41 @@ desired effect
                     alert("Connection Failed Refresh Page");
                 }
             });
+        }
+
+        function removeAdvice(adviceName) {
+            $.confirm({
+                type: "red",
+                icon: "fa fa-remove",
+                theme: "modern",
+                title: "Warning",
+                content: "Removing the advice will reset the student advice progress.",
+                buttons: {
+                    confirm: {
+                        btnClass: "btn btn-danger",
+                        action: function () {
+                            $.ajax({
+                                type: 'POST',
+                                url: 'superAdminHome.aspx/universalQuery',
+                                data: JSON.stringify({ SQL: "DELETE FROM tblAdvice WHERE adviceName = '" + adviceName + "'" }),
+                                contentType: 'application/json; charset=utf-8',
+                                dataType: 'json',
+                                async: false,
+                                success: function (response) {
+                                    //NO RETURN ON SUCCESS
+                                },
+                                failure: function (response) {
+                                    alert("Connection Failed Refresh Page");
+                                }
+                            });
+                        }
+                    },
+                    cancel: {}
+                },
+                onDestroy: function () {
+                    window.location.href = "superAdminHome.aspx";
+                }
+            })
         }
 
         //REMOVE STEP EVENT

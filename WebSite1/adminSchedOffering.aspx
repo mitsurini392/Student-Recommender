@@ -137,6 +137,7 @@ desired effect
                         <li class="active"><a href="#"><i class="fa fa-clock-o"></i><span>Schedule Offering</span></a></li>
                         <li><a href="adminEnrollSched.aspx"><i class="fa fa-calendar-plus-o"></i><span>Event Date</span></a></li>
                         <li><a href="adminPetitionList.aspx"><i class="fa fa-list"></i><span>Petition Subject</span></a></li>
+                        <li><a href="adminReports.aspx"><i class="fa fa-file-o"></i><span>Reports</span></a></li>
                         <br />
                         <li><a href="adminAcctSettings.aspx"><i class="fa fa-gear"></i><span>Account Settings</span></a></li>
                         <li>
@@ -160,7 +161,7 @@ desired effect
             </section>
             <!-- Main content -->
             <section class="content">
-                <div class="box box-success box-solid">
+                <div class="box box-warning box-solid">
                     <div class="box-header with-border">
                         <h3 class="box-title">Search Schedule</h3>
                         <!-- /.box-tools -->
@@ -170,7 +171,7 @@ desired effect
                         <div class="input-group input-group-sm">
                             <input class="form-control" type="text" placeholder="Search" id="txtSearchSched">
                             <span class="input-group-btn">
-                                <button type="button" onclick="searchSched()" class="btn btn-success btn-flat"><i class="fa fa-search"></i></button>
+                                <button type="button" onclick="searchSched()" class="btn btn-warning btn-flat"><i class="fa fa-search"></i></button>
                             </span>
                         </div>
                         <div id="searchSchedCont">
@@ -305,16 +306,12 @@ desired effect
                         //ADD ADD BUTTON
                         var addSched = document.createElement("div");
                         addSched.className = "margin";
-                        addSched.innerHTML = "<button class='btn btn-success btn-block' onclick='addSched()'>Upload Schedule File</button>";
-                        var addSched2 = document.createElement("div");
-                        addSched2.className = 'margin';
-                        addSched2.innerHTML = "<button class='btn btn-success btn-block' onclick='addSingle()'>Add Single Subject Schedule</button>";
+                        addSched.innerHTML = "<div class='row'><div class='col-md-6'><button class='btn btn-warning btn-block' onclick='addSched()'>Upload Schedule File</button></div><div class='col-md-6'><button class='btn btn-warning btn-block' onclick='addSingle()'>Add Single Subject Schedule</button></div></div>";
                         schedContainer.appendChild(addSched);
-                        schedContainer.appendChild(addSched2);
                         schedContainer.appendChild(loadSchedManual(course));
                         for (var i = 0; i < XMLrows.length; i++) {
                             var schedBox = document.createElement("div");
-                            schedBox.className = "box box-success box-solid";
+                            schedBox.className = "box box-warning box-solid";
                             schedBox.innerHTML = "<div class='box-header with-border'><h3 class='box-title'>" + XMLrows[i].getElementsByTagName("schedAY")[0].innerHTML + "</h3><div class='btn-group pull-right'><button class='btn btn-danger' onclick=\"removeUpload('" + XMLrows[i].getElementsByTagName("schedAY")[0].innerHTML + "')\"><i class='fa fa-remove'></i></button></div></div>" +
                                 "<div class='box-body'>" + loadSchedTable(XMLrows[i].getElementsByTagName("schedAY")[0].innerHTML, XMLrows[i].getElementsByTagName("schedSem")[0].innerHTML, XMLrows[i].getElementsByTagName("schedYear")[0].innerHTML, currentCourse) + "</div>";
                             schedContainer.appendChild(schedBox);
@@ -404,7 +401,7 @@ desired effect
                             tbl.innerHTML += "<tr><td style='display: none'>" + $(XMLrows[i]).find('schedCode').html() + "</td><td>" + $(XMLrows[i]).find('schedAY').html() + "</td><td>" + $(XMLrows[i]).find('subjCode').html() + "</td><td>" + $(XMLrows[i]).find('subjName').html() + "</td><td>" + $(XMLrows[i]).find('schedSection').html() + "</td><td>" + $(XMLrows[i]).find('schedRoom').html() + "</td><td>" + $(XMLrows[i]).find('schedProf').html() + "</td><td>" + $(XMLrows[i]).find('schedDesc').html() + "</td><td><div class='btn-group'><button class='btn btn-warning' onclick=\"editSingle('" + $(XMLrows[i]).find('schedCode').html() + "')\"><i class='fa fa-edit'></i></button><button class='btn btn-danger' onclick=\"removeSingle('" + $(XMLrows[i]).find('schedCode').html() + "')\"><i class='fa fa-remove'></i></button></div></td></tr>";
                         }
 
-                        content.innerHTML = "<div class='box box-success box-solid'>" +
+                        content.innerHTML = "<div class='box box-warning box-solid'>" +
                             "<div class='box-header with-border'>" +
                             "<h3 class='box-title'>Single Added Schedules</h3>" +
                             "</div>" +
@@ -433,7 +430,7 @@ desired effect
                     "</div>",
                 title: "Upload Schedule",
                 icon: "fa fa-upload",
-                type: "green",
+                type: "orange",
                 onContentReady: function () {
                     uploadSched = "";
                     //On Upload Grade
@@ -461,7 +458,7 @@ desired effect
                 },
                 buttons: {
                     submit: {
-                        btnClass: 'btn-success',
+                        btnClass: 'btn-warning',
                         action: function () {
                             //Do not continue if UPLOAD HAS NO VALUE
                             if (uploadSched == "") {
@@ -547,10 +544,10 @@ desired effect
                 columnClass: 'col-lg-12',
                 title: 'Add Schedule',
                 icon: 'fa fa-plus',
-                type: 'green',
+                type: 'orange',
                 buttons: {
                     Add: {
-                        btnClass: 'btn-success',
+                        btnClass: 'btn-warning',
                         action: function () {
                             //Check if Theres Unvalidated subjected
                             var addSched = document.getElementsByClassName("addSched")[0];
@@ -677,7 +674,7 @@ desired effect
                     "</div>",
                 buttons: {
                     Confirm: {
-                        btnClass: 'btn btn-success',
+                        btnClass: 'btn btn-warning',
                         action: function () {
                             var row = elem.parentNode.parentNode;
                             row.getElementsByTagName("td")[0].innerHTML = this.$content.find('.selectCourse').val();
@@ -753,7 +750,7 @@ desired effect
             $.confirm({
                 title: 'Add Single Schedule',
                 icon: 'fa fa-list',
-                type: 'green',
+                type: 'orange',
                 content: "<select class='form-control selectAY' style='margin-bottom: 4px'><option>First Year</option><option>Second Year</option><option>Third Year</option><option>Fourth Year</option></select><select class='form-control selectYear' style='margin-bottom: 4px'></select><select class='form-control selectSem' style='margin-bottom: 4px'><option>First</option><option>Second</option><option>Summer</option></select><select class='form-control selectSubj' style='margin-bottom: 4px'></select><input class='form-control txtSect' style='margin-bottom: 4px' placeholder='Section'><input class='form-control txtRoom' style='margin-bottom: 4px' placeholder='Room No.'><input class='form-control txtProf' style='margin-bottom: 4px' placeholder='Professor'><input class='form-control txtSched' style='margin-bottom: 4px' placeholder='Schedule'>",
                 onOpenBefore: function () {
                     //GET CURRENT SCHOOL YEAR
@@ -795,7 +792,7 @@ desired effect
                 },
                 buttons: {
                     add: {
-                        btnClass: 'btn btn-success',
+                        btnClass: 'btn btn-warning',
                         action: function () {
                             //GET VALUES
                             var selectAY = this.$content.find('.selectAY').val();
@@ -818,10 +815,10 @@ desired effect
                                     title: 'Success',
                                     content: 'Schedule Added!',
                                     theme: 'modern',
-                                    type: 'green',
+                                    type: 'orange',
                                     buttons: {
                                         ok: {
-                                            btnClass: 'btn btn-success',
+                                            btnClass: 'btn btn-warning',
                                             action: function () {
                                                 window.location.href = 'adminSchedOffering.aspx';
                                             }

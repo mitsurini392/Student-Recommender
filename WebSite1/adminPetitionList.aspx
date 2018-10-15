@@ -138,6 +138,7 @@ desired effect
                         <li><a href="adminSchedOffering.aspx"><i class="fa fa-clock-o"></i><span>Schedule Offering</span></a></li>
                         <li><a href="adminEnrollSched.aspx"><i class="fa fa-calendar-plus-o"></i><span>Event Date</span></a></li>
                         <li class="active"><a href="#"><i class="fa fa-list"></i><span>Petition Subject</span></a></li>
+                        <li><a href="adminReports.aspx"><i class="fa fa-file-o"></i><span>Reports</span></a></li>
                         <br />
                         <li><a href="adminAcctSettings.aspx"><i class="fa fa-gear"></i><span>Account Settings</span></a></li>
                         <li>
@@ -464,7 +465,7 @@ desired effect
                     if (XMLrows.length > 0) {
                         petitionStudentList.innerHTML = "";
                         //Add Buttons
-                        petitionStudentList.innerHTML += "<p>Change Status</p><button class='btn btn-info margin' onclick=\"printPetitionList('" + petSubjID + "')\">Submit to VPAA</button><button class='btn btn-success margin' onclick=\"setPetitionStatus('Approved','" + petSubjID + "')\">Approve</button><button class='btn btn-danger margin' onclick=\"setPetitionStatus('Rejected','" + petSubjID + "')\">Reject</button>";
+                        petitionStudentList.innerHTML += "<p>Change Status</p><button class='btn btn-info margin' onclick=\"printPetitionList('" + petSubjID + "')\">Print</button><button class='btn btn-success margin' onclick=\"setPetitionStatus('Approved','" + petSubjID + "')\">Approve</button><button class='btn btn-danger margin' onclick=\"setPetitionStatus('Rejected','" + petSubjID + "')\">Reject</button>";
                         var tbl = document.createElement("table");
                         tbl.className = "table table-striped";
                         var headerRow = tbl.insertRow(-1);
@@ -572,6 +573,9 @@ desired effect
 
         function printPetitionList(petSubjID) {
             $.confirm({
+                title: "Print Petition List",
+                icon: "fa fa-list",
+                type: "orange",
                 columnClass: 'large',
                 content: "<div id='printPetitionList'>" +
                     "<p class='printHeader'>" + getEquivSubjCode(petSubjID) + ": " + getEquivSubjName(petSubjID) + "<br>" +

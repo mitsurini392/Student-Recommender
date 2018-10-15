@@ -138,6 +138,7 @@ desired effect
                         <li><a href="adminSchedOffering.aspx"><i class="fa fa-clock-o"></i><span>Schedule Offering</span></a></li>
                         <li class="active"><a href="#"><i class="fa fa-calendar-plus-o"></i><span>Event Date</span></a></li>   
                         <li><a href="adminPetitionList.aspx"><i class="fa fa-list"></i><span>Petition Subject</span></a></li>
+                        <li><a href="adminReports.aspx"><i class="fa fa-file-o"></i><span>Reports</span></a></li>
                         <br />
                         <li><a href="adminAcctSettings.aspx"><i class="fa fa-gear"></i><span>Account Settings</span></a></li>
                         <li>
@@ -172,7 +173,7 @@ desired effect
                                         <th>Actions</th>
                                     </tr>
                                 </table>
-                                <button class="btn btn-success pull-right margin" onclick="addEventDialog()">Add Event</button>
+                                <button class="btn btn-warning pull-right margin" onclick="addEventDialog()">Add Event</button>
                             </div>
                         </div>
                     </div>
@@ -323,6 +324,7 @@ desired effect
                             end: new Date(eventEndFormat),
                         };
                         $('#calendar').fullCalendar('renderEvent', event, true);
+                        
                     }
                 },
                 failure: function (response) {

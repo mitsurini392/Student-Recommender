@@ -27,6 +27,7 @@
     <link href="dist/css/croppie.css" rel="stylesheet" />
     <%--Anno CSS--%>
     <link href="dist/css/anno.css" rel="stylesheet" />
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -113,6 +114,8 @@
                     <!-- /.navbar-collapse -->
                     <!-- Navbar Right Menu -->
                     <div class="navbar-custom-menu">
+                        <div class="notifMsg">
+                        </div>
                         <ul class="nav navbar-nav">
                             <li>
                                 <a href="#" onclick="viewAllGrades()"><i class="fa fa-list-ul"></i></a>
@@ -213,7 +216,7 @@
                                     <h3>No Petitions Enlisted</h3>
                                 </div>
                             </div>
-                            <div class="box box-primary">
+                            <div class="box box-primary eventDateCont">
                                 <div class="box-header">
                                     <h3 class="box-title">Event Dates</h3>
                                 </div>
@@ -373,6 +376,8 @@
     <script src="dist/js/jquery.scrollintoview.js"></script>
     <%--Advice JS--%>
     <script src="dist/js/advice.js"></script>
+    <%--CHART JS--%>
+    <script src="plugins/chartjs/Chart.bundle.js"></script>
 
 
     <script>
@@ -389,33 +394,71 @@
             loadClassifAve(currentStudentNo, currentCurr);
             loadAdvicesList();
             viewAnnoun();
-            //systemTutorial();
+            systemTutorial();
         }
 
         function systemTutorial() {
-            //Get What to Highlight
+            //Cached Tutorial
+            if (localStorage.tut != null) {
+                //
+            }
+            else {
+                //Get What to Highlight
             var profileContainer = document.getElementById("profileContainer");
             var predictionContainer = document.getElementById("predictionContainer").parentNode.parentNode;
             var loadPetitionContainer = document.getElementById("loadPetitionContainer").parentNode;
             var LoadAdvicesContainer = document.getElementById("LoadAdvicesContainer").parentNode;
             var anno1 = new Anno([{
                 target: profileContainer,
-                content: "<img style='position: absolute;margin-left:-55px;margin-top: 40px;' height='100px' src='https://i.imgur.com/rjjl2ir.jpg'></img>Oni-chans can edit their profile picture desu~",
+                content: "Students can edit their info and change profile picture.",
                 position: 'right',
             }, {
+                target: document.getElementById("rootwizard").parentNode.parentNode,
+                content: '1. Grade file will come from <b>SIS</b>. To save grade file, you must go to the <b>Grades Page</b> of the SIS and hit <b>CTRL + S </b>.',
+                position: 'left',
+            }, {
                 target: predictionContainer,
-                content: 'Write Something',
+                content: '2. After uploading the grade file, student can now view their grades prediction.',
                 position: 'center-bottom',
             }, {
                 target: loadPetitionContainer,
-                content: 'Write Something',
+                content: '3. Petition that you enlist will go here.',
                 position: 'right',
             }, {
                 target: LoadAdvicesContainer,
-                content: 'Write Something',
-                position: 'center-bottom',
+                content: '4. Your personalized advices will appear here',
+                position: 'left'
+            }, {
+                target: document.getElementsByClassName("eventDateCont")[0],
+                content: '5. Important events and schedules will appear here.',
+                position: 'right',
+            }, {
+                target: document.getElementsByClassName("notifMsg")[0],
+                content: "<div class='text-center'><i class='fa fa-list-ul fa-2x'></i><br>Gradesheet<br><br><i class='fa fa-envelope-o fa-2x'></i><br>Notification<br><br><i class='fa fa-sign-out fa-2x'></i><br>Sign-out</div>",
+                position: 'left',
+            }, {
+                target: profileContainer,
+                position: 'right',
+                content: "Run tutorial again on exit ?",
+                autoFocusLastButton: false,
+                buttons: [
+                    {
+                        text: 'Yes',
+                        click: function (anno, evt) {
+                            anno.hide();
+                        }
+                    }, {
+                        text: "I'm Good",
+                        click: function (anno, evt) {
+                            localStorage.tut = '1';
+                            anno.hide();
+                        }
+                    }
+                ]
             }]);
-            anno1.show();
+            anno1.show();          
+            }
+
         }
 
         function loadAdvicesList() {
@@ -1279,6 +1322,13 @@
                                     break;
                                 }
                             }
+
+                            else if (XMLrows[i].getElementsByTagName("trigName")[0].innerHTML == "Graduating") {
+                                if (grad(currentStudentNo, currentCurr) == false) {
+                                    matched = false;
+                                    break;
+                                }
+                            }
                         }
                     }
                 },
@@ -1310,7 +1360,8 @@
                 "</div>" +
                 "</div>";
             tab3.appendChild(advContainer);
-            var SQL = "DELETE FROM tblAdviceList WHERE advType = '" + adviceName + "' AND studNo = '" + currentStudentNo + "'; INSERT INTO tblAdviceList VALUES('" + currentStudentNo + "','" + adviceName + "',null,0);";
+            var currDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            var SQL = "DELETE FROM tblAdviceList WHERE advType = '" + adviceName + "' AND studNo = '" + currentStudentNo + "'; INSERT INTO tblAdviceList VALUES('" + currentStudentNo + "','" + adviceName + "',null,0); INSERT INTO tblRptAdvice VALUES('" + currentStudentNo + "','" + adviceName + "','" + currDate + "')";
             //DONT ADD IF EXIST
             if (searchStudAdvList(currentStudentNo, adviceName) == false) {
                 if (updateAndInsert(SQL) == true) {
@@ -1859,14 +1910,76 @@
             $.confirm({
                 icon: 'fa fa-list-ul',
                 title: "View Grades",
-                content: "",
+                content: "<div style='width: 800px; margin: auto;' class='pad'><canvas id='myChart' style='background: white;'></canvas></div>",
                 type: "purple",
                 columnClass: "col-lg-12",
-                theme: "supervan",
                 buttons: {
                     close: {}
                 },
                 onOpenBefore: function () {
+                    //////////GET LABELS
+                    var chartLabels = [];
+                    var chartValues = [];
+                    $.ajax({
+                        type: 'POST',
+                        url: 'adminStudentView.aspx/universalQuery',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify({ SQL: "select distinct gradesYear,gradesSem,ROUND(AVG(CAST(tblGrades.gradesGrade AS DECIMAL(3,2))),2) as average from tblGrades WHERE studNo = '" + currentStudentNo + "' AND gradesGrade LIKE '%[0-9]%' GROUP BY gradesYear,gradesSem ORDER BY gradesYear asc, gradesSem asc;" }),
+                        dataType: 'json',
+                        async: false,
+                        success: function (response) {
+                            //Create Content;
+                            var content = "";
+                            //XML pareser
+                            var text = response.d;
+                            var parser, xmlDoc;
+                            parser = new DOMParser();
+                            xmlDoc = parser.parseFromString(text, "text/xml");
+
+                            //Get Rows From XML
+                            var XMLrows = xmlDoc.getElementsByTagName("Table");
+                            if (XMLrows.length > 0) {
+                                //PUSH LABELS
+                                for (var i = 0; i < XMLrows.length; i++) {
+                                    chartLabels.push($(XMLrows[i]).find("gradesYear").html() + " " + $(XMLrows[i]).find("gradesSem").html());
+                                    chartValues.push($(XMLrows[i]).find("average").html().substring(0, 4));
+                                }
+                            }
+                        },
+                    });
+                    //////////GENERATE PERFORMANCE CHART
+                    var ctx = document.getElementById('myChart').getContext('2d');
+
+                    var myChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [{
+                                label: "Averages",
+                                backgroundColor: 'rgba(255, 99, 132,0)',
+                                borderColor: '#605CA8',
+                                data: chartValues,
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        reverse: true,
+                                        suggestedMin: 1,
+                                        stepSize: .5
+                                    }
+                                }],
+                                xAxes: [{
+                                    ticks: {
+                                        reverse: true,
+                                        stepSize: 1
+                                    }
+                                }]
+                            }
+                        }
+                    });
+
                     var outerThis = this;
                     ////////////////////////////////GET ALL GRADES
                     $.ajax({
@@ -1938,6 +2051,8 @@
                             alert("Connection Failed Refresh Page");
                         }
                     });
+
+
                 }
             });
         }
@@ -1977,7 +2092,7 @@
             return subjGrade;
         }
 
-                //Get Number Suffix
+        //Get Number Suffix
         function numbersuffix(i) {
             var j = i % 10,
                 k = i % 100;

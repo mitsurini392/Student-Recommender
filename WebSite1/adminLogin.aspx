@@ -34,7 +34,7 @@
                     <div class="card card-login">
                         <form class="form" runat="server">
                             <div class="card-header card-header-warning text-center">
-                                <h4 class="card-title">Student Recommender</h4>
+                                <h4 class="card-title">Student Academic <br /> Based Recommender</h4>
                             </div>
                             <p class="description text-center">Admin Login</p>
                             <div class="card-body">

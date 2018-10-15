@@ -638,7 +638,7 @@ function subjFailed(studNo, param1, param2) {
             var XMLrows = xmlDoc.getElementsByTagName("Table");
             if (XMLrows.length > 0) {
                 if (XMLrows[0].getElementsByTagName("gradesStatus")[0].innerHTML == 'F' && XMLrows[1].getElementsByTagName("gradesStatus")[0].innerHTML == 'P') {
-                 
+
                     var subjF = XMLrows[0].getElementsByTagName("totalUnits")[0].innerHTML;
                     subjF = parseInt(subjF, 10);
                     var subjP = XMLrows[1].getElementsByTagName("totalUnits")[0].innerHTML;
@@ -760,3 +760,35 @@ function gpa(studNo, param1, param2) {
     return toReturn;
 }
 
+function grad(studNo, studCurr) {
+    var toReturn = false;
+    $.ajax({
+        type: 'POST',
+        url: 'Advice.aspx/universalQuery',
+        async: false,
+        data: JSON.stringify({ SQL: "select count(gradesStatus) from tblGrades where studNo = '" + studNo + "' AND gradesStatus = 'P'; select count(*) from tblSubj WHERE currCode = '" + studCurr + "';" }),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function (response) {
+            var xml = document.createElement("div");
+            xml.innerHTML = response.d;
+
+            //XML pareser
+            var text = response.d;
+            var parser, xmlDoc;
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+
+            //Get Rows From XML
+            var XMLrows = xmlDoc.getElementsByTagName("Table");
+            var XMLrows1 = xmlDoc.getElementsByTagName("Table1");
+            if (XMLrows.length > 0) {
+                if ($(XMLrows[0]).find("Column1").html() == $(XMLrows1[0]).find("Column1").html()) {
+                    toReturn = true;
+                }
+            }
+        }
+    });
+
+    return toReturn;
+}

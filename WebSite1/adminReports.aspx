@@ -175,9 +175,9 @@ desired effect
                                     <div class="input-group-addon">
                                         <i class="fa fa-search"></i>
                                     </div>
-                                    <input type="text" class="form-control" placeholder="Student No.,First Name, Last Name " />
+                                    <input type="text" class="form-control" id="txtSearchStudReport" placeholder="Student No., First name or Last name" />
                                     <span class="input-group-btn">
-                                        <button class="btn btn-warning" onclick="searchStud(this)">Search</button>
+                                        <button class="btn btn-warning" onclick="searchReportStud()">Search</button>
                                     </span>
                                 </div>
                             </div>
@@ -189,7 +189,7 @@ desired effect
                                             <div class="input-group-addon">
                                                 From
                                             </div>
-                                            <input type="date" class="form-control" />
+                                            <input type="date" class="form-control" id="ReportStudFrom"/>
                                         </div>
                                     </div>
                                 </div>
@@ -200,12 +200,12 @@ desired effect
                                             <div class="input-group-addon">
                                                 To
                                             </div>
-                                            <input type="date" class="form-control" />
+                                            <input type="date" class="form-control" id="ReportStudTo"/>
                                             <span class="input-group-btn">
-                                                <button class="btn btn-warning" onclick="searchStud(this)">Go</button>
+                                                <button class="btn btn-warning" onclick="dateReportStud()">Go</button>
                                             </span>
                                             <span class="input-group-btn" >
-                                                <button class="btn btn-info" style="margin-left: 20px" onclick="searchStud(this)"><b>Print</b></button>
+                                                <button class="btn btn-info" style="margin-left: 20px" onclick="printStud()"><b>Print</b></button>
                                             </span>
                                         </div>
                                     </div>
@@ -228,9 +228,9 @@ desired effect
                                     <div class="input-group-addon">
                                         <i class="fa fa-search"></i>
                                     </div>
-                                    <input type="text" class="form-control" placeholder="Student No.,First Name, Last Name " />
+                                    <input type="text" class="form-control"  id="txtRptSearchAdvice" placeholder="Student No.,First Name, Last Name " />
                                     <span class="input-group-btn">
-                                        <button class="btn btn-warning" onclick="searchStud(this)">Search</button>
+                                        <button class="btn btn-warning" onclick="searchAdviceReports()">Search</button>
                                     </span>
                                 </div>
                             </div>
@@ -242,7 +242,7 @@ desired effect
                                             <div class="input-group-addon">
                                                 From
                                             </div>
-                                            <input type="date" class="form-control" />
+                                            <input type="date" class="form-control" id="dateReportAdviceFrom" />
                                         </div>
                                     </div>
                                 </div>
@@ -253,19 +253,19 @@ desired effect
                                             <div class="input-group-addon">
                                                 To
                                             </div>
-                                            <input type="date" class="form-control" />
+                                            <input type="date" class="form-control" id="dateReportAdviceTo" />
                                             <span class="input-group-btn">
-                                                <button class="btn btn-warning" onclick="searchStud(this)">Go</button>
+                                                <button class="btn btn-warning" onclick="dateAdviceReports()">Go</button>
                                             </span>
                                             <span class="input-group-btn" >
-                                                <button class="btn btn-info" style="margin-left: 20px" onclick="searchStud(this)"><b>Print</b></button>
+                                                <button class="btn btn-info" style="margin-left: 20px" onclick="printAdvice()"><b>Print</b></button>
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <table class="table table-striped" id="studTable">
+                            <table class="table table-striped" id="adviceTable">
                                 <tr>
                                     <th>Student No.</th>
                                     <th>Full Name</th>
@@ -275,22 +275,110 @@ desired effect
                             </table>
                         </div>
                         <!-- /.tab-pane -->
-                        <div class="tab-pane listStudentAdvice" id="tab_3">
+                        <div class="tab-pane" id="tab_3">
+                            <div class="form-group">
+                                <label>Search:</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-search"></i>
+                                    </div>
+                                    <input type="text" class="form-control" id="txtSearchInquired" placeholder="Student No., First name or Last name" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-warning" onclick="searchInquiries() ">Search</button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Search by Date:</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                From
+                                            </div>
+                                            <input type="date" class="form-control" id="ReportInqFrom"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                To
+                                            </div>
+                                            <input type="date" class="form-control" id="ReportInqTo"/>
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-warning" onclick="dateInquiries()">Go</button>
+                                            </span>
+                                            <span class="input-group-btn" >
+                                                <button class="btn btn-info" style="margin-left: 20px" onclick="printInquire()"><b>Print</b></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <table class="table table-striped" id="inqTable">
+                                <tr>
+                                    <th>Student No.</th>
+                                    <th>Full Name</th>
+                                    <th>Date Inquired</th>
+                                </tr>
+                            </table>
                         </div>
                         <!-- /.tab-pane -->
                         <div class="tab-pane listStudentAdvice" id="tab_4">
-                            <div class="box box-success">
-
-                                <div class="box-body chat" id="inquiringStudent" style="overflow: auto; width: auto; height: 500px;">
-                                    <!-- chat item -->
-                                    <div class="text-center text-muted">
-                                        <i class="fa fa-file-o fa-5x"></i>
-                                        <h3>No Inquiring Students</h3>
+                            <div class="form-group">
+                                <label>Search:</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-search"></i>
                                     </div>
-                                    <!-- chat item -->
+                                    <input type="text" class="form-control" id="txtSearchAnnoun" placeholder="Search" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-warning" onclick="searchAnnoun()">Search</button>
+                                    </span>
                                 </div>
-                                <!-- /.chat -->
                             </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Search by Date:</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                From
+                                            </div>
+                                            <input type="date" class="form-control" id="ReportAnnounFrom"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                To
+                                            </div>
+                                            <input type="date" class="form-control" id="ReportAnnounTo"/>
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-warning" onclick="dateInquiries()">Go</button>
+                                            </span>
+                                            <span class="input-group-btn" >
+                                                <button class="btn btn-info" style="margin-left: 20px" onclick="printAnnoun()"><b>Print</b></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <table class="table table-striped" id="announTable">
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Description</th>
+                                    <th>Date</th>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                     <!-- /.tab-content -->
@@ -348,7 +436,10 @@ desired effect
             currentAdminUser = '<%= Session["adminUser"].ToString() %>';
             currentCourse = '<%= Session["adminCourse"].ToString() %>';
             loadProfile(currentAdminUser);
-            loadPetitionList(currentCourse);
+            loadReportStud();
+            loadAdviceReports();
+            loadInquiries();
+            loadAnnoun();
         }
 
         function loadProfile(adminUsername) {
@@ -379,6 +470,548 @@ desired effect
                     alert("Connection Failed Refresh Page");
                 }
             });
+        }
+
+        function loadReportStud() {
+           $.ajax({
+                type: 'POST',
+                url: 'adminReports.aspx/universalQuery',
+               async: false,
+               data: JSON.stringify({ SQL: "select * from tblRptStud inner join tblStud on tblRptStud.studNo = tblStud.studNo WHERE courseCode = '" + currentCourse + "'" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    if (XMLrows.length > 0) {
+                        var studTable = document.getElementById("studTable");
+                        studTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Date Registered</td></tr>";
+
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var row = studTable.insertRow(-1);
+                            currDate = new Date($(XMLrows[i]).find("timestamp").html());
+                            currDate = (currDate.getMonth() + 1) + '/' + currDate.getDate() + '/' + currDate.getFullYear();
+
+                            row.innerHTML += "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + currDate + "</td>";
+                        }
+                    }
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function searchReportStud() {
+            var txtSearchStudReport = document.getElementById("txtSearchStudReport").value;
+
+            $.ajax({
+                type: 'POST',
+                url: 'adminReports.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "select * from tblRptStud inner join tblStud on tblRptStud.studNo = tblStud.studNo WHERE courseCode = '" + currentCourse + "' AND (tblRptStud.studNo LIKE '%" + txtSearchStudReport + "%' OR tblStud.studFirst LIKE '%" + txtSearchStudReport + "%' OR tblStud.studMiddle LIKE '%" + txtSearchStudReport + "%' OR tblStud.studLast LIKE '%" + txtSearchStudReport + "%')" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    if (XMLrows.length > 0) {
+                        var studTable = document.getElementById("studTable");
+                        studTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Date Registered</td></tr>";
+
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var row = studTable.insertRow(-1);
+                            currDate = new Date($(XMLrows[i]).find("timestamp").html());
+                            currDate = (currDate.getMonth() + 1) + '/' + currDate.getDate() + '/' + currDate.getFullYear();
+
+                            row.innerHTML += "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + currDate + "</td>";
+                        }
+                    }
+                    else {
+                        var studTable = document.getElementById("studTable");
+                        studTable.innerHTML = "<div class='text-center text-muted'><i class='fa fa-file-o fa-3x'></i><br><br>No Records Found</div>";
+                    }
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function dateReportStud() {
+            var ReportStudFrom = $("#ReportStudFrom").val();
+            var ReportStudTo = $("#ReportStudTo").val();
+
+            $.ajax({
+                type: 'POST',
+                url: 'adminReports.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "select * from tblRptStud inner join tblStud on tblRptStud.studNo = tblStud.studNo WHERE courseCode = '" + currentCourse + "' AND [timestamp] BETWEEN '" + ReportStudFrom + "' AND '" + ReportStudTo + "';" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+
+                    if (XMLrows.length > 0) {
+                        var studTable = document.getElementById("studTable");
+                        studTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Date Registered</td></tr>";
+
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var row = studTable.insertRow(-1);
+                            currDate = new Date($(XMLrows[i]).find("timestamp").html());
+                            currDate = (currDate.getMonth() + 1) + '/' + currDate.getDate() + '/' + currDate.getFullYear();
+
+                            row.innerHTML += "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + currDate + "</td>";
+                        }
+                    }
+                    else {
+                        var studTable = document.getElementById("studTable");
+                        studTable.innerHTML = "<div class='text-center text-muted'><i class='fa fa-file-o fa-3x'></i><br><br>No Records Found</div>";
+                    }
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function loadAdviceReports() {
+            $.ajax({
+                type: 'POST',
+                url: 'adminReports.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "SELECT * from tblRptAdvice inner join tblstud on tblStud.studNo = tblRptAdvice.studNo WHERE courseCode = '" + currentCourse + "';" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    if (XMLrows.length > 0) {
+                        var adviceTable = document.getElementById("adviceTable");
+                        adviceTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Advice Name</td><td>Date</td></tr>";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var row = adviceTable.insertRow(-1);
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + $(XMLrows[i]).find("adviceName").html() + "</td><td>" + $(XMLrows[i]).find("adviceTimeStamp").html() + "</td>";
+
+                        }
+                    }
+                   
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function searchAdviceReports() {
+            var txtRptSearchAdvice = document.getElementById("txtRptSearchAdvice").value;
+            $.ajax({
+                type: 'POST',
+                url: 'adminReports.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "SELECT * from tblRptAdvice inner join tblstud on tblStud.studNo = tblRptAdvice.studNo WHERE courseCode = '" + currentCourse + "' AND (tblRptAdvice.studNo LIKE '%" + txtRptSearchAdvice + "%');" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    if (XMLrows.length > 0) {
+                        var adviceTable = document.getElementById("adviceTable");
+                        adviceTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Advice Name</td><td>Date</td></tr>";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var row = adviceTable.insertRow(-1);
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + $(XMLrows[i]).find("adviceName").html() + "</td><td>" + $(XMLrows[i]).find("adviceTimeStamp").html() + "</td>";
+
+                        }
+                    }
+                    else {
+                        var adviceTable = document.getElementById("adviceTable");
+                        adviceTable.innerHTML = "<div class='text-center text-muted'><i class='fa fa-file-o fa-3x'></i><br><br>No Records Found</div>";
+                    }
+                   
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function dateAdviceReports() {
+            var dateReportAdviceFrom = $("#dateReportAdviceFrom").val();
+            var dateReportAdviceTo = $("#dateReportAdviceTo").val();
+            $.ajax({
+                type: 'POST',
+                url: 'adminReports.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "SELECT * from tblRptAdvice inner join tblstud on tblStud.studNo = tblRptAdvice.studNo WHERE courseCode = '" + currentCourse + "' AND adviceTimeStamp BETWEEN '" + dateReportAdviceFrom + "' AND '" + dateReportAdviceTo + "'" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    if (XMLrows.length > 0) {
+                        var adviceTable = document.getElementById("adviceTable");
+                        adviceTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Advice Name</td><td>Date</td></tr>";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var row = adviceTable.insertRow(-1);
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + $(XMLrows[i]).find("adviceName").html() + "</td><td>" + $(XMLrows[i]).find("adviceTimeStamp").html() + "</td>";
+
+                        }
+                    }
+                    else {
+                        var adviceTable = document.getElementById("adviceTable");
+                        adviceTable.innerHTML = "<div class='text-center text-muted'><i class='fa fa-file-o fa-3x'></i><br><br>No Records Found</div>";
+                    }
+                   
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function loadInquiries() {
+            $.ajax({
+                type: 'POST',
+                url: 'adminReports.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "select * from tblNOtifs inner join tblstud on tblstud.studNo = tblnotifs.studNo WHERE courseCode = '" + currentCourse + "';" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    if (XMLrows.length > 0) {
+                        var inqTable = document.getElementById("inqTable");
+                        inqTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Notify Date</td></tr>";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var row = inqTable.insertRow(-1);
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>"+$(XMLrows[i]).find("studFirst").html()+" " +$(XMLrows[i]).find("studMiddle").html()+ " " + $(XMLrows[i]).find("studLast").html() +  "</td><td>"+$(XMLrows[i]).find("notifDate").html()+"</td>";
+
+                        }
+                    }
+                   
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function searchInquiries() {
+            var txtSearchInquired = $("#txtSearchInquired").val();
+            $.ajax({
+                type: 'POST',
+                url: 'adminReports.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "select * from tblNOtifs inner join tblstud on tblstud.studNo = tblnotifs.studNo WHERE courseCode = '" + currentCourse + "' AND (tblstud.studNo LIKE '%" + txtSearchInquired + "%' OR tblstud.studFirst LIKE '%" + txtSearchInquired + "%');" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    if (XMLrows.length > 0) {
+                        var inqTable = document.getElementById("inqTable");
+                        inqTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Notify Date</td></tr>";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var row = inqTable.insertRow(-1);
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + $(XMLrows[i]).find("notifDate").html() + "</td>";
+
+                        }
+                    }
+                    else {
+                        var inqTable = document.getElementById("inqTable");
+                        inqTable.innerHTML = "<div class='text-center text-muted'><i class='fa fa-file-o fa-3x'></i><br><br>No Records Found</div>";
+                    }
+                   
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function dateInquiries() {
+            var ReportInqFrom = $("#ReportInqFrom").val();
+            var ReportInqTo = $("#ReportInqTo").val();
+            $.ajax({
+                type: 'POST',
+                url: 'adminReports.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "select * from tblNOtifs inner join tblstud on tblstud.studNo = tblnotifs.studNo WHERE courseCode = '" + currentCourse + "' AND notifDate BETWEEN '" + ReportInqFrom + "' AND '" + ReportInqTo + "';" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    if (XMLrows.length > 0) {
+                        var inqTable = document.getElementById("inqTable");
+                        inqTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Notify Date</td></tr>";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var row = inqTable.insertRow(-1);
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + $(XMLrows[i]).find("notifDate").html() + "</td>";
+
+                        }
+                    }
+                    else {
+                        var inqTable = document.getElementById("inqTable");
+                        inqTable.innerHTML = "<div class='text-center text-muted'><i class='fa fa-file-o fa-3x'></i><br><br>No Records Found</div>";
+                    }
+                   
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function loadAnnoun() {
+            $.ajax({
+                type: 'POST',
+                url: 'adminReports.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "select * from tblAnnounce Where courseCode = '" + currentCourse + "'" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    if (XMLrows.length > 0) {
+                        var announTable = document.getElementById("announTable");
+                        announTable.innerHTML = "<tr><td>Subject</td><td>Description</td><td>Timestamp</td></tr>";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var row = announTable.insertRow(-1);
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("announceSubj").html() + "</td><td>"+$(XMLrows[i]).find("announceDesc").html()+"</td><td>"+$(XMLrows[i]).find("announceDate").html()+"</td>";
+
+                        }
+                    }
+                   
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function searchAnnoun() {
+            var txtSearchAnnoun = $("#txtSearchAnnoun").val();
+            $.ajax({
+                type: 'POST',
+                url: 'adminReports.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "select * from tblAnnounce Where courseCode = '" + currentCourse + "' AND (announceSubj LIKE '%" + txtSearchAnnoun + "%' OR announceDesc LIKE '%" + txtSearchAnnoun + "%')" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    if (XMLrows.length > 0) {
+                        var announTable = document.getElementById("announTable");
+                        announTable.innerHTML = "<tr><td>Subject</td><td>Description</td><td>Timestamp</td></tr>";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var row = announTable.insertRow(-1);
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("announceSubj").html() + "</td><td>"+$(XMLrows[i]).find("announceDesc").html()+"</td><td>"+$(XMLrows[i]).find("announceDate").html()+"</td>";
+
+                        }
+                    }
+                    else {
+                        var announTable = document.getElementById("announTable");
+                        announTable.innerHTML = "<div class='text-center text-muted'><i class='fa fa-file-o fa-3x'></i><br><br>No Records Found</div>";
+                    }
+                   
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+
+        function printStud() {
+            var ReportStudFrom = $("#ReportStudFrom").val();
+            var ReportStudTo = $("#ReportStudTo").val();
+
+            var studTable = document.getElementById("studTable");
+
+            if (ReportStudFrom != "" && ReportStudTo != "") {
+                PrintElem(studTable, 'date', ReportStudFrom, ReportStudTo,'Student Registered Archives');
+            }
+               PrintElem(studTable,'all',null,null,'Student Registered Archives');
+        }
+
+        function printAdvice() {
+            var dateReportAdviceFrom = $("#dateReportAdviceFrom").val();
+            var dateReportAdviceTo = $("#dateReportAdviceTo").val();
+
+            var adviceTable = document.getElementById("adviceTable");
+
+            if (dateReportAdviceFrom != "" && dateReportAdviceTo != "") {
+                PrintElem(studTable, 'date', dateReportAdviceFrom, dateReportAdviceTo,'Advices Archive');
+            }
+               PrintElem(adviceTable,'all',null,null,'Advices Archive');
+        }
+
+        function printInquire() {
+            var ReportInqFrom = $("#ReportInqFrom").val();
+            var ReportInqTo = $("#ReportInqTo").val();
+
+            var inqTable = document.getElementById("inqTable");
+
+            if (ReportInqFrom != "" && ReportInqTo != "") {
+                PrintElem(inqTable, 'date', ReportInqFrom, ReportInqFrom,'Students Inquired Archive');
+            }
+            PrintElem(inqTable, 'all', null, null, 'Students Inquired Archive');
+        }
+
+        function printAnnoun() {
+            var ReportAnnounFrom = $("#ReportAnnounFrom").val();
+            var ReportAnnounTo = $("#ReportAnnounTo").val();
+
+            var announTable = document.getElementById("announTable");
+
+            if (ReportAnnounFrom  != "" && ReportAnnounTo != "") {
+                PrintElem(announTable, 'date', ReportAnnounFrom, ReportAnnounTo,'Announcement Archive');
+            }
+            PrintElem(announTable, 'all', null, null, 'Announcement Archive');
+        }
+
+        function PrintElem(elem, type, from, to, type2) {
+            var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+
+            mywindow.document.write("<html><head><title>"+type2+"</title>");
+            mywindow.document.write("<style media='print'>" +
+                "p {" +
+                "   font-family: programme_bold;" +
+                "}" +
+                "table {" +
+                "   border-collapse: collapse;" +
+                "   width: 100%;" +
+                "}" +
+                "table,td,th {" +
+                "   border: 1px solid black;" +
+                "}" +
+                "</style>");
+            var header = "";
+            if (type == 'all') {
+                header = "of all time";
+            }
+            else if (type == 'date') {
+                header = "From: " + from + "  To: "+to;
+            }
+            mywindow.document.write('</head><body ><h3>Student Academic Based Recommender System</h3>');
+            mywindow.document.write("<p>" + header + "</p>");
+            mywindow.document.write(elem.outerHTML);
+            mywindow.document.write('</body></html>');
+
+            mywindow.document.close(); // necessary for IE >= 10
+            mywindow.focus(); // necessary for IE >= 10*/
+
+            mywindow.print();
+            mywindow.close();
+
+            return true;
         }
 
     </script>

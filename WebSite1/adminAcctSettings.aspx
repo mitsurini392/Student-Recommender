@@ -12,9 +12,9 @@
     <!-- Bootstrap 3.3.6 -->
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link href="dist/css/font-awesome.min.css" rel="stylesheet" />
     <!-- Ionicons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <link href="dist/css/ionicons.min.css" rel="stylesheet" />
     <!-- Theme style -->
     <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
     <link type="text/css" rel="stylesheet" href="dist/css/jsgrid.min.css" />
@@ -138,6 +138,7 @@ desired effect
                         <li><a href="adminSchedOffering.aspx"><i class="fa fa-clock-o"></i><span>Schedule Offering</span></a></li>
                         <li><a href="adminEnrollSched.aspx"><i class="fa fa-calendar-plus-o"></i><span>Event Date</span></a></li>
                         <li><a href="adminPetitionList.aspx"><i class="fa fa-list"></i><span>Petition Subject</span></a></li>
+                        <li><a href="adminReports.aspx"><i class="fa fa-file-o"></i><span>Reports</span></a></li>
                         <br />
                         <li class="active"><a href="#"><i class="fa fa-gear"></i><span>Account Settings</span></a></li>
                         <li>

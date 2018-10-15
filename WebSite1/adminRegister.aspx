@@ -51,7 +51,7 @@
 
 		                    	<div class="wizard-header">
 		                        	<h3 class="wizard-title">
-		                        		Student Recommender
+		                        		Student Based Recommender System
 		                        	</h3>
 									<h5>Create your Administrator Account</h5>
 		                    	</div>

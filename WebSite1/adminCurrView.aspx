@@ -153,6 +153,7 @@ desired effect
                         <li><a href="adminSchedOffering.aspx"><i class="fa fa-clock-o"></i><span>Schedule Offering</span></a></li>
                         <li><a href="adminEnrollSched.aspx"><i class="fa fa-calendar-plus-o"></i><span>Event Date</span></a></li>
                         <li><a href="adminPetitionList.aspx"><i class="fa fa-list"></i><span>Petition Subject</span></a></li>
+                        <li><a href="adminReports.aspx"><i class="fa fa-file-o"></i><span>Reports</span></a></li>
                         <br />
                         <li><a href="adminAcctSettings.aspx"><i class="fa fa-gear"></i><span>Account Settings</span></a></li>
                         <li>
@@ -544,11 +545,11 @@ desired effect
                         var cell2 = row.insertCell(2);
                         cell2.innerHTML = subjectNames
                         var cell3 = row.insertCell(3);
-                        cell3.innerHTML = "<input type='text' class='form-control viewPreReq' value='red,green,blue' />";
+                        cell3.innerHTML = "<input type='text' class='form-control viewPreReq' value='' />";
                         cell3.style.width = "300px";
                         cell3.className = "tdViewPrereq"
                         var cell4 = row.insertCell(4);
-                        cell4.innerHTML = "<input type='text' class='form-control viewCoReq' value='red,green,blue' />";
+                        cell4.innerHTML = "<input type='text' class='form-control viewCoReq' value='' />";
                         cell4.style.width = "300px";
                         var cell5 = row.insertCell(5);
                         cell5.innerHTML = subjectUnits;
