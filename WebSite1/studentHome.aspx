@@ -439,7 +439,7 @@
             }, {
                 target: profileContainer,
                 position: 'right',
-                content: "Run tutorial again on exit ?",
+                content: "Run tutorial again on log-in?",
                 autoFocusLastButton: false,
                 buttons: [
                     {

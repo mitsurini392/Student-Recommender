@@ -29,7 +29,8 @@ public partial class superAdminHome : System.Web.UI.Page {
             SQLConn.con.Close();
             return true;
         }
-        catch (Exception) {
+        catch (Exception e) {
+            Debug.Print(e.ToString());
             SQLConn.con.Close();
             return false;
         }
