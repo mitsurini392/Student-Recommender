@@ -101,75 +101,239 @@ function getFailedSubjPassed(studNo, subjID) {
     return passed;
 }
 
-function enlistPetition(elem, studNo, courseCode) {
-    ////////////////////////////////Search SubjID on Petition List
-    var searchSubjID = "SELECT * FROM tblPet WHERE petSubjID = '" + elem.value + "'";
-    var createAPetition = false;
-    $.ajax({
-        type: 'POST',
-        url: 'Advice.aspx/universalQuery',
-        async: false,
-        data: JSON.stringify({ SQL: searchSubjID }),
-        contentType: 'application/json; charset=utf-8',
-        dataType: 'json',
-        success: function (response) {
-            var xml = document.createElement("div");
-            xml.innerHTML = response.d;
+//function enlistPetition(elem, studNo, courseCode) {
+//    ////////////////////////////////Search SubjID on Petition List
+//    var searchSubjID = "SELECT * FROM tblPet WHERE petSubjID = '" + elem.value + "'";
+//    var createAPetition = false;
+//    $.ajax({
+//        type: 'POST',
+//        url: 'Advice.aspx/universalQuery',
+//        async: false,
+//        data: JSON.stringify({ SQL: searchSubjID }),
+//        contentType: 'application/json; charset=utf-8',
+//        dataType: 'json',
+//        success: function (response) {
+//            var xml = document.createElement("div");
+//            xml.innerHTML = response.d;
 
-            //XML pareser
-            var text = response.d;
-            var parser, xmlDoc;
-            parser = new DOMParser();
-            xmlDoc = parser.parseFromString(text, "text/xml");
+//            //XML pareser
+//            var text = response.d;
+//            var parser, xmlDoc;
+//            parser = new DOMParser();
+//            xmlDoc = parser.parseFromString(text, "text/xml");
 
-            //Get Rows From XML
-            var XMLrows = xmlDoc.getElementsByTagName("Table");
-            if (XMLrows.length == 0) {
-                //Create A Petition List
-                createAPetition = true;
-            }
+//            //Get Rows From XML
+//            var XMLrows = xmlDoc.getElementsByTagName("Table");
+//            if (XMLrows.length == 0) {
+//                //Create A Petition List
+//                createAPetition = true;
+//            }
 
-        },
-        failure: function (response) {
-            alert(response.d);
-        }
-    });
-    ////////////////////////////////Create A Petition (ONLY IF THERE IS NO PETITION EXISTED)
-    if (createAPetition == true) {
-        var SQLInsert = "INSERT INTO tblPet VALUES('" + elem.value + "','" + courseCode + "','" + getCurrentYearSem()[0] + "','" + getCurrentYearSem()[1] + "','Pending');";
-        $.ajax({
-            type: 'POST',
-            url: 'Advice.aspx/universalQuery',
-            async: false,
-            data: JSON.stringify({ SQL: SQLInsert }),
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            success: function (response) {
-                //INSERT DOES NOT RETURN
+//        },
+//        failure: function (response) {
+//            alert(response.d);
+//        }
+//    });
+//    ////////////////////////////////Create A Petition (ONLY IF THERE IS NO PETITION EXISTED)
+//    if (createAPetition == true) {
+//        var SQLInsert = "INSERT INTO tblPet VALUES('" + elem.value + "','" + courseCode + "','" + getCurrentYearSem()[0] + "','" + getCurrentYearSem()[1] + "','Pending');";
+//        $.ajax({
+//            type: 'POST',
+//            url: 'Advice.aspx/universalQuery',
+//            async: false,
+//            data: JSON.stringify({ SQL: SQLInsert }),
+//            contentType: 'application/json; charset=utf-8',
+//            dataType: 'json',
+//            success: function (response) {
+//                //INSERT DOES NOT RETURN
+//            },
+//            failure: function (response) {
+//                alert(response.d);
+//            }
+//        });
+//    }
+//    ///////////////////////////////Enlist in Petition
+//    $.ajax({
+//        type: 'POST',
+//        url: 'Advice.aspx/universalQuery',
+//        async: false,
+//        data: JSON.stringify({ SQL: "DELETE FROM tblPetStud WHERE studNo = '" + studNo + "' AND petSubjID = '" + elem.value + "'; INSERT INTO tblPetStud VALUES('" + studNo + "','" + elem.value + "');" }),
+//        contentType: 'application/json; charset=utf-8',
+//        dataType: 'json',
+//        success: function (response) {
+//            //INSERT DOES NOT RETURN
+//        },
+//        failure: function (response) {
+//            alert(response.d);
+//        }
+//    });
+//    elem.innerHTML = "Enlisted";
+//    elem.disabled = true;
+//}
+
+function enlistPetition(elem, subjID, studNo, courseCode) {
+    $.confirm({
+        icon: "fa fa-exclamation",
+        title: "Warning",
+        type: "red",
+        content: "Once you enlist, you need to enroll this petition class when it is approved .<p style='color: red'>If the units for the subject is not fit next semester, you are advice to remove least priority subject.</p>Are you sure you want to enlist?",
+        buttons: {
+            ok: {
+                btnClass: 'btn btn-danger',
+                text: 'Ok',
+                action: function () {
+                    countPet(elem, subjID, studNo, courseCode);
+                }
             },
-            failure: function (response) {
-                alert(response.d);
-            }
-        });
-    }
-    ///////////////////////////////Enlist in Petition
-    $.ajax({
-        type: 'POST',
-        url: 'Advice.aspx/universalQuery',
-        async: false,
-        data: JSON.stringify({ SQL: "DELETE FROM tblPetStud WHERE studNo = '" + studNo + "' AND petSubjID = '" + elem.value + "'; INSERT INTO tblPetStud VALUES('" + studNo + "','" + elem.value + "');" }),
-        contentType: 'application/json; charset=utf-8',
-        dataType: 'json',
-        success: function (response) {
-            //INSERT DOES NOT RETURN
+            cancel: {}
         },
-        failure: function (response) {
-            alert(response.d);
+        onOpenBefore: function () {
+            //this.buttons.ok.disable();
+            //counter(this.buttons.ok,0);
         }
     });
-    elem.innerHTML = "Enlisted";
-    elem.disabled = true;
 }
+
+function counter(btn, start) {
+    var i = start;
+    var timer = setInterval(function () {
+        btn.setText("OK " + i);
+        i--;
+        if (i == -1) {
+            clearInterval(timer);
+            btn.setText("OK ");
+            btn.enable();
+        }
+    }, 1000);
+
+}
+
+function countPet(elem, subjID, studNo, courseCode) {
+    var parentContainer = elem.parentNode;
+    $.confirm({
+        title: "Enlisting Petition",
+        icon: "fa fa-spinner fa-spin",
+        content: "Please wait.",
+        autoClose: 'ok|500',
+        buttons: {
+            ok: {
+                isHidden: true,
+                action: function () {
+                    ////////////////////////////////COUNT STUDENT LISTED ON PETITION
+                    var success = true;
+                    $.ajax({
+                        type: 'POST',
+                        url: 'Advice.aspx/universalQuery',
+                        async: false,
+                        data: JSON.stringify({ SQL: "SELECT * FROM tblPetStud WHERE studNo = '" + studNo + "'" }),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        success: function (response) {
+                            var xml = document.createElement("div");
+                            xml.innerHTML = response.d;
+
+                            //XML pareser
+                            var text = response.d;
+                            var parser, xmlDoc;
+                            parser = new DOMParser();
+                            xmlDoc = parser.parseFromString(text, "text/xml");
+
+                            //Get Rows From XML
+                            var XMLrows = xmlDoc.getElementsByTagName("Table");
+                            if (XMLrows.length >= 2) {
+                                $.alert("You can only enlist in petition twice per semester.");
+                                success = false;
+                            }
+
+                        },
+                        failure: function (response) {
+                            alert(response.d);
+                        }
+                    });
+                    if (success == false) {
+                        return;
+                    }
+                    ////////////////////////////////Search SubjID on Petition List
+                    var searchSubjID = "SELECT * FROM tblPet WHERE petSubjID = '" + subjID + "'";
+                    var createAPetition = false;
+                    $.ajax({
+                        type: 'POST',
+                        url: 'Advice.aspx/universalQuery',
+                        async: false,
+                        data: JSON.stringify({ SQL: searchSubjID }),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        success: function (response) {
+                            var xml = document.createElement("div");
+                            xml.innerHTML = response.d;
+
+                            //XML pareser
+                            var text = response.d;
+                            var parser, xmlDoc;
+                            parser = new DOMParser();
+                            xmlDoc = parser.parseFromString(text, "text/xml");
+
+                            //Get Rows From XML
+                            var XMLrows = xmlDoc.getElementsByTagName("Table");
+                            if (XMLrows.length == 0) {
+                                //Create A Petition List
+                                createAPetition = true;
+                            }
+
+                        },
+                        failure: function (response) {
+                            alert(response.d);
+                        }
+                    });
+                    ////////////////////////////////Create A Petition (ONLY IF THERE IS NO PETITION EXISTED)
+                    if (createAPetition == true) {
+                        var SQLInsert = "INSERT INTO tblPet VALUES('" + subjID + "','" + courseCode + "','" + getCurrentYearSem()[0] + "','" + getCurrentYearSem()[1] + "','Pending');";
+                        $.ajax({
+                            type: 'POST',
+                            url: 'Advice.aspx/universalQuery',
+                            async: false,
+                            data: JSON.stringify({ SQL: SQLInsert }),
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            success: function (response) {
+                                //INSERT DOES NOT RETURN
+                            },
+                            failure: function (response) {
+                                alert(response.d);
+                            }
+                        });
+                    }
+                    ///////////////////////////////Enlist in Petition
+                    $.ajax({
+                        type: 'POST',
+                        url: 'Advice.aspx/universalQuery',
+                        async: false,
+                        data: JSON.stringify({ SQL: "DELETE FROM tblPetStud WHERE studNo = '" + studNo + "' AND petSubjID = '" + subjID + "'; INSERT INTO tblPetStud VALUES('" + studNo + "','" + subjID + "');" }),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        success: function (response) {
+                            //INSERT DOES NOT RETURN
+                        },
+                        failure: function (response) {
+                            alert(response.d);
+                        }
+                    });
+
+                    parentContainer.style.filter = 'opacity(.5)';
+                    elem.outerHTML = "<a class='small-box-footer'>Enlisted</a>";
+
+                    //Unlock next Priority
+                    try {
+                        parentContainer.parentNode.parentNode.parentNode.nextSibling.getElementsByClassName("overlay")[0].className = "";
+                    } catch (e) {
+                        return;
+                    }
+                }
+            }
+        }
+    });
+}
+
 
 function getAdviceDesc(adviceName) {
     var adviceDesc;
@@ -791,4 +955,32 @@ function grad(studNo, studCurr) {
     });
 
     return toReturn;
+}
+
+function countPostReq(failedSubj) {
+    var countSubj = 0;
+    $.ajax({
+        type: 'POST',
+        url: 'Advice.aspx/universalQuery',
+        async: false,
+        data: JSON.stringify({ SQL: "select count(*) as totPrereq,(select count(*) from tblCoReq where coReq = '" + failedSubj + "')as totCoreq from tblPreReq where preReq = '" + failedSubj + "'" }),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function (response) {
+            var xml = document.createElement("div");
+            xml.innerHTML = response.d;
+
+            //XML pareser
+            var text = response.d;
+            var parser, xmlDoc;
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+
+            //Get Rows From XML
+            var XMLrows = xmlDoc.getElementsByTagName("Table");
+            countSubj = countSubj + parseInt($(XMLrows[0]).find("totPrereq").html());
+            countSubj = countSubj + parseInt($(XMLrows[0]).find("totCoreq").html());
+        }
+    });
+    return countSubj;
 }

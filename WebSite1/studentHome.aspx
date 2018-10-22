@@ -260,6 +260,7 @@
                                                         <li><a href="#tab1" data-toggle="tab">Upload Gradesheet</a></li>
                                                         <li><a href="#tab2" data-toggle="tab">Validate Grades</a></li>
                                                         <li><a href="#tab3" data-toggle="tab">Get Advice</a></li>
+                                                        <li><a href="#tab4" data-toggle="tab">Petition Enlistment</a></li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -310,6 +311,15 @@
                                                             <br />
                                                             <br />
                                                             <h3>Advices Coming Soon</h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane pad" id="tab4" style="height: 350px; background: #ECF0F5; overflow: auto">
+                                                <div class="box box-solid">
+                                                    <div class="box-header">
+                                                        <h3 class="box-title">Petition</h3>
+                                                        <div class="box-body">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -404,59 +414,59 @@
             }
             else {
                 //Get What to Highlight
-            var profileContainer = document.getElementById("profileContainer");
-            var predictionContainer = document.getElementById("predictionContainer").parentNode.parentNode;
-            var loadPetitionContainer = document.getElementById("loadPetitionContainer").parentNode;
-            var LoadAdvicesContainer = document.getElementById("LoadAdvicesContainer").parentNode;
-            var anno1 = new Anno([{
-                target: profileContainer,
-                content: "Students can edit their info and change profile picture.",
-                position: 'right',
-            }, {
-                target: document.getElementById("rootwizard").parentNode.parentNode,
-                content: '1. Grade file will come from <b>SIS</b>. To save grade file, you must go to the <b>Grades Page</b> of the SIS and hit <b>CTRL + S </b>.',
-                position: 'left',
-            }, {
-                target: predictionContainer,
-                content: '2. After uploading the grade file, student can now view their grades prediction.',
-                position: 'center-bottom',
-            }, {
-                target: loadPetitionContainer,
-                content: '3. Petition that you enlist will go here.',
-                position: 'right',
-            }, {
-                target: LoadAdvicesContainer,
-                content: '4. Your personalized advices will appear here',
-                position: 'left'
-            }, {
-                target: document.getElementsByClassName("eventDateCont")[0],
-                content: '5. Important events and schedules will appear here.',
-                position: 'right',
-            }, {
-                target: document.getElementsByClassName("notifMsg")[0],
-                content: "<div class='text-center'><i class='fa fa-list-ul fa-2x'></i><br>Gradesheet<br><br><i class='fa fa-envelope-o fa-2x'></i><br>Notification<br><br><i class='fa fa-sign-out fa-2x'></i><br>Sign-out</div>",
-                position: 'left',
-            }, {
-                target: profileContainer,
-                position: 'right',
-                content: "Run tutorial again on log-in?",
-                autoFocusLastButton: false,
-                buttons: [
-                    {
-                        text: 'Yes',
-                        click: function (anno, evt) {
-                            anno.hide();
+                var profileContainer = document.getElementById("profileContainer");
+                var predictionContainer = document.getElementById("predictionContainer").parentNode.parentNode;
+                var loadPetitionContainer = document.getElementById("loadPetitionContainer").parentNode;
+                var LoadAdvicesContainer = document.getElementById("LoadAdvicesContainer").parentNode;
+                var anno1 = new Anno([{
+                    target: profileContainer,
+                    content: "Students can edit their info and change profile picture.",
+                    position: 'right',
+                }, {
+                    target: document.getElementById("rootwizard").parentNode.parentNode,
+                    content: '1. Grade file will come from <b>SIS</b>. To save grade file, you must go to the <b>Grades Page</b> of the SIS and hit <b>CTRL + S </b>.',
+                    position: 'left',
+                }, {
+                    target: predictionContainer,
+                    content: '2. After uploading the grade file, student can now view their grades prediction.',
+                    position: 'center-bottom',
+                }, {
+                    target: loadPetitionContainer,
+                    content: '3. Petition that you enlist will go here.',
+                    position: 'right',
+                }, {
+                    target: LoadAdvicesContainer,
+                    content: '4. Your personalized advices will appear here',
+                    position: 'left'
+                }, {
+                    target: document.getElementsByClassName("eventDateCont")[0],
+                    content: '5. Important events and schedules will appear here.',
+                    position: 'right',
+                }, {
+                    target: document.getElementsByClassName("notifMsg")[0],
+                    content: "<div class='text-center'><i class='fa fa-list-ul fa-2x'></i><br>Gradesheet<br><br><i class='fa fa-envelope-o fa-2x'></i><br>Notification<br><br><i class='fa fa-sign-out fa-2x'></i><br>Sign-out</div>",
+                    position: 'left',
+                }, {
+                    target: profileContainer,
+                    position: 'right',
+                    content: "Run tutorial again on log-in?",
+                    autoFocusLastButton: false,
+                    buttons: [
+                        {
+                            text: 'Yes',
+                            click: function (anno, evt) {
+                                anno.hide();
+                            }
+                        }, {
+                            text: "I'm Good",
+                            click: function (anno, evt) {
+                                localStorage.tut = '1';
+                                anno.hide();
+                            }
                         }
-                    }, {
-                        text: "I'm Good",
-                        click: function (anno, evt) {
-                            localStorage.tut = '1';
-                            anno.hide();
-                        }
-                    }
-                ]
-            }]);
-            anno1.show();          
+                    ]
+                }]);
+                anno1.show();
             }
 
         }
@@ -1219,35 +1229,35 @@
                             //}
 
 
-                            /////////////////////////////Check For Petitions
-                            if (getFailedSubj(currentStudentNo).length > 0) {
-                                var subjs = getFailedSubj(currentStudentNo);
-                                petitionList = document.createElement("ul");
-                                petitionList.className = 'product-list product-list-in-box';
-                                for (var i = 0; i < subjs.length; i++) {
-                                    petitionList.innerHTML += "<li class='item'>" +
-                                        "<div class='product-info' style='margin-left:0'>" +
-                                        "<a class='product-title'>" + getEquivSubjCode(subjs[i]) +
-                                        "<button class='btn btn-success pull-right' onclick='enlistPetition(this,currentStudentNo,currentCourse)' value='" + subjs[i] + "'>Enlist</button></a>" +
-                                        "</div>" +
-                                        "</li>";
-                                }
-                                //Generate Subjects to Petitions
-                                var petitionContainer = document.createElement("div");
-                                petitionContainer.innerHTML = "<div class='box box-solid'>" +
-                                    "<div class='box-header with-border'>" +
-                                    "<i class='fa fa-file-o'></i>" +
-                                    "<h3 class='box-title'>Subjects to Petition</h3>" +
-                                    "</div>" +
-                                    "<div class='box-body'>" +
-                                    "<ul class='products-list product-list-in-box'>" +
-                                    petitionList.innerHTML +
-                                    "</ul>" +
-                                    "</div>" +
-                                    "</div>";
-                                tab3.appendChild(petitionContainer);
+                            ///////////////////////////////Check For Petitions
+                            //if (getFailedSubj(currentStudentNo).length > 0) {
+                            //    var subjs = getFailedSubj(currentStudentNo);
+                            //    petitionList = document.createElement("ul");
+                            //    petitionList.className = 'product-list product-list-in-box';
+                            //    for (var i = 0; i < subjs.length; i++) {
+                            //        petitionList.innerHTML += "<li class='item'>" +
+                            //            "<div class='product-info' style='margin-left:0'>" +
+                            //            "<a class='product-title'>" + getEquivSubjCode(subjs[i]) +
+                            //            "<button class='btn btn-success pull-right' onclick='enlistPetition(this,currentStudentNo,currentCourse)' value='" + subjs[i] + "'>Enlist</button></a>" +
+                            //            "</div>" +
+                            //            "</li>";
+                            //    }
+                            //    //Generate Subjects to Petitions
+                            //    var petitionContainer = document.createElement("div");
+                            //    petitionContainer.innerHTML = "<div class='box box-solid'>" +
+                            //        "<div class='box-header with-border'>" +
+                            //        "<i class='fa fa-file-o'></i>" +
+                            //        "<h3 class='box-title'>Subjects to Petition</h3>" +
+                            //        "</div>" +
+                            //        "<div class='box-body'>" +
+                            //        "<ul class='products-list product-list-in-box'>" +
+                            //        petitionList.innerHTML +
+                            //        "</ul>" +
+                            //        "</div>" +
+                            //        "</div>";
+                            //    tab3.appendChild(petitionContainer);
 
-                            }
+                            //}
 
                             if (tab3.innerHTML == "") {
                                 tab3.innerHTML = "<div class='text-center'><br><br><i class='fa fa-info-circle fa-5x'></i><p>No advice available, but you can check your Grades Prediction</p></div>";
@@ -1257,6 +1267,133 @@
                             $.alert("Error Occured please try again");
                             return false;
                         }
+                    }
+
+                    if (index == 3) {
+                        tab4.innerHTML = "";
+                        //GET STUDENTS LATEST SEMESTER
+                        var petitionContainer = document.createElement("div");
+                        petitionContainer.innerHTML = "<div class='box box-solid'>" +
+                            "<div class='box-header with-border'>" +
+                            "<i class='fa fa-file-o'></i>" +
+                            "<h3 class='box-title'>Subjects to Petition</h3>" +
+                            "</div>" +
+                            "<div class='box-body bodyPetition'>" +
+                            "<ul class='products-list product-list-in-box'>" +
+                            "</ul>" +
+                            "</div>" +
+                            "</div>";
+
+
+                        //CREATE PRIORITY CONTAINERS
+                        var extremePrioCont = document.createElement("div");
+                        extremePrioCont.innerHTML = "<div class='box box-danger box-solid'>" +
+                            "<div class='box-header with-border'>" +
+                            "<h3 class='box-title'>Subjects to Petition (High Priority)</h3>" +
+                            "<div class='box-tools pull-right'>" +
+                            "<button type='button' class='btn btn-box-tool' data-widget='collapse'><i class='fa fa-minus'></i>" +
+                            "</button>" +
+                            "</div>" +
+                            "</div>" +
+                            "<div class='box-body bodyHigh'>" +
+                            "</div>" +
+                            "</div>";
+
+                        var mediumPrioCont = document.createElement("div");
+                        mediumPrioCont.innerHTML = "<div class='box box-warning box-solid'>" +
+                            "<div class='box-header with-border'>" +
+                            "<h3 class='box-title'>Subjects to Petition (Medium Priority)</h3>" +
+                            "<div class='box-tools pull-right'>" +
+                            "<button type='button' class='btn btn-box-tool' data-widget='collapse'><i class='fa fa-minus'></i>" +
+                            "</button>" +
+                            "</div>" +
+                            "</div>" +
+                            "<div class='box-body bodyMed'>" +
+                            "</div><div class='overlay'><i class='fa fa-lock'></i></div>" +
+                            "</div>";
+
+                        var lowPrioCont = document.createElement("div");
+                        lowPrioCont.innerHTML = "<div class='box box-success box-solid'>" +
+                            "<div class='box-header with-border'>" +
+                            "<h3 class='box-title'>Subjects to Petition (Low Priority)</h3>" +
+                            "<div class='box-tools pull-right'>" +
+                            "<button type='button' class='btn btn-box-tool' data-widget='collapse'><i class='fa fa-minus'></i>" +
+                            "</button>" +
+                            "</div>" +
+                            "</div>" +
+                            "<div class='box-body bodyLow'>" +
+                            "</div><div class='overlay'><i class='fa fa-lock'></i></div>" +
+                            "</div>";
+
+                        //CHECK FAILING GRADES
+                        var failedSubjs = getFailedSubj(currentStudentNo);
+
+                        for (var i = 0; i < failedSubjs.length; i++) {
+                            var highFlag = 0;
+                            var medFlag = 0;
+                            var lowFlag = 0;
+                            //CREATE CONTAINERS
+                            if (countPostReq(failedSubjs[i]) >= 2 && highFlag == 0) {
+                                $(petitionContainer).find(".bodyPetition").append(extremePrioCont);
+                                highFlag = 1;
+                            }
+                            else if (countPostReq(failedSubjs[i]) == 1 && medFlag == 0) {
+                                $(petitionContainer).find(".bodyPetition").append(mediumPrioCont);
+                                medFlag = 1;
+                            }
+                            else if (countPostReq(failedSubjs[i]) == 0 && lowFlag == 0) {
+                                $(petitionContainer).find(".bodyPetition").append(lowPrioCont);
+                                lowFlag = 1;
+                            }
+
+                            //ADD SUBJECT TO CONTAINERS
+                            if (countPostReq(failedSubjs[i]) >= 2) {
+                                $(extremePrioCont).find(".bodyHigh").append("<div class='small-box bg-red'>" +
+                                    "<div class='inner'>" +
+                                    "<h3>" + getEquivSubjCode(failedSubjs[i]) + "</h3>" +
+                                    "<p>" + getEquivSubjName(failedSubjs[i]) + "</p>" +
+                                    "</div>" +
+                                    "<div class='icon'>" +
+                                    "<i class='ion ion-person-add'></i>" +
+                                    "</div>" +
+                                    "<a href='javascript:void(0)' onclick=\"enlistPetition(this,'" + failedSubjs[i] + "','" + currentStudentNo + "','" + currentCourse + "')\" class='small-box-footer'>" +
+                                    "Enlist Petition <i class='fa fa-arrow-circle-right'></i>" +
+                                    "</a>" +
+                                    "</div></div>");
+                            }
+                            else if (countPostReq(failedSubjs[i]) == 1) {
+                                $(mediumPrioCont).find(".bodyMed").append("<div class='small-box bg-yellow'>" +
+                                    "<div class='inner'>" +
+                                    "<h3>" + getEquivSubjCode(failedSubjs[i]) + "</h3>" +
+                                    "<p>" + getEquivSubjName(failedSubjs[i]) + "</p>" +
+                                    "</div>" +
+                                    "<div class='icon'>" +
+                                    "<i class='ion ion-person-add'></i>" +
+                                    "</div>" +
+                                    "<a href='javascript:void(0)' onclick=\"enlistPetition(this,'" + failedSubjs[i] + "','" + currentStudentNo + "','" + currentCourse + "')\" class='small-box-footer'>" +
+                                    "Enlist Petition <i class='fa fa-arrow-circle-right'></i>" +
+                                    "</a>" +
+                                    "</div>");
+                            }
+                            else if (countPostReq(failedSubjs[i]) == 0) {
+                                $(lowPrioCont).find(".bodyLow").append("<div class='small-box bg-green'>" +
+                                    "<div class='inner'>" +
+                                    "<h3>" + getEquivSubjCode(failedSubjs[i]) + "</h3>" +
+                                    "<p>" + getEquivSubjName(failedSubjs[i]) + "</p>" +
+                                    "</div>" +
+                                    "<div class='icon'>" +
+                                    "<i class='ion ion-person-add'></i>" +
+                                    "</div>" +
+                                    "<a href='javascript:void(0)' onclick=\"enlistPetition(this,'" + failedSubjs[i] + "','" + currentStudentNo + "','" + currentCourse + "')\" class='small-box-footer'>" +
+                                    "Enlist Petition <i class='fa fa-arrow-circle-right'></i>" +
+                                    "</a>" +
+                                    "</div>");
+                            }
+
+                        }
+
+
+                        tab4.appendChild(petitionContainer);
                     }
 
                     // Set the name for the next tab
@@ -1481,6 +1618,32 @@
                 }
             });
             return equivSubjCode;
+        }
+
+        function getEquivSubjName(subjID) {
+            var equivName = "";
+            $.ajax({
+                type: 'POST',
+                url: 'studentHome.aspx/getEquivSubjCode',
+                async: false,
+                data: JSON.stringify({ subjID: subjID }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+                    if (xml.getElementsByTagName("subjname")[0] != null) {
+                        equivName = xml.getElementsByTagName("subjname")[0].innerHTML;
+                    }
+                    else {
+                        //
+                    }
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+            return equivName;
         }
 
         function checkGradeOnCurr(subjID, curr) {

@@ -172,7 +172,7 @@ public partial class studentHome : System.Web.UI.Page {
 
         SQLConn.con.Close();
         SQLConn.con.Open();
-        SqlCommand cmd = new SqlCommand("SELECT subjCode FROM tblSubj WHERE subjID = '"+subjID+"'", SQLConn.con);
+        SqlCommand cmd = new SqlCommand("SELECT subjCode,subjName FROM tblSubj WHERE subjID = '"+subjID+"'", SQLConn.con);
 
         SqlDataAdapter adapter = new SqlDataAdapter(cmd);
 
