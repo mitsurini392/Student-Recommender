@@ -197,6 +197,7 @@ desired effect
                                 <div class="col-lg-3" id="selectYear">
                                 </div>
                                 <div class="col-lg-9" id="viewYear">
+                                   <div class="text-center text-muted"><i class="fa fa-list-ol fa-3x"></i><br /><br />Select a year to view student ranking / running for honors(4th year)</div>
                                 </div>
                             </div>
                         </div>
@@ -464,7 +465,7 @@ desired effect
                     var XMLrows = xmlDoc.getElementsByTagName("Table");
 
                     if (XMLrows.length > 0) {
-                        content = "<table class='table table-striped'>" +
+                        content = "<button class='btn btn-warning>Print</button><table class='table table-striped'>" +
                             "<tr><th>Rank</th><th>Student No.</th><th>Name</th><th>Section</th><th>GPA</th><th>Grades</th></tr>";
                         for (var i = 0; i < XMLrows.length; i++) {
                             content += "<tr><td>" + (i + 1) + "</td><td>" + XMLrows[i].getElementsByTagName("studNo")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("studFirst")[0].innerHTML + " " + XMLrows[i].getElementsByTagName("studMiddle")[0].innerHTML + " " + XMLrows[i].getElementsByTagName("studLast")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("StudSec")[0].innerHTML + "</td><td>" + XMLrows[i].getElementsByTagName("gradesGrade")[0].innerHTML.substring(0, 4) + "</td><td><button class='btn btn-warning margin' onclick=\"viewGrades('" + XMLrows[i].getElementsByTagName("studNo")[0].innerHTML + "')\">Grades</button></td></tr>";

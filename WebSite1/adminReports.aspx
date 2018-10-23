@@ -164,8 +164,9 @@ desired effect
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Student Registered</a></li>
                         <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Advices</a></li>
-                        <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Students Inquired<small class="label bg-orange" id="badgeAdvice"></small></a></li>
-                        <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Announcement Logs<small class="label bg-orange" id="badgeInquire"></small></a></li>
+                        <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Students Inquired</a></li>
+                        <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Announcement Logs</a></li>
+                        <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">Petitions</a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_1">
@@ -189,7 +190,7 @@ desired effect
                                             <div class="input-group-addon">
                                                 From
                                             </div>
-                                            <input type="date" class="form-control" id="ReportStudFrom"/>
+                                            <input type="date" class="form-control" id="ReportStudFrom" />
                                         </div>
                                     </div>
                                 </div>
@@ -200,11 +201,11 @@ desired effect
                                             <div class="input-group-addon">
                                                 To
                                             </div>
-                                            <input type="date" class="form-control" id="ReportStudTo"/>
+                                            <input type="date" class="form-control" id="ReportStudTo" />
                                             <span class="input-group-btn">
                                                 <button class="btn btn-warning" onclick="dateReportStud()">Go</button>
                                             </span>
-                                            <span class="input-group-btn" >
+                                            <span class="input-group-btn">
                                                 <button class="btn btn-info" style="margin-left: 20px" onclick="printStud()"><b>Print</b></button>
                                             </span>
                                         </div>
@@ -228,9 +229,21 @@ desired effect
                                     <div class="input-group-addon">
                                         <i class="fa fa-search"></i>
                                     </div>
-                                    <input type="text" class="form-control"  id="txtRptSearchAdvice" placeholder="Student No.,First Name, Last Name " />
+                                    <input type="text" class="form-control" id="txtRptSearchAdvice" placeholder="Student No.,First Name, Last Name " />
                                     <span class="input-group-btn">
                                         <button class="btn btn-warning" onclick="searchAdviceReports()">Search</button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Search by Advice:</label>
+                                <div class="input-group">
+                                    <select class="form-control" id="selectAdvice" onchange="selectAdvice(this)">
+                                        <option>All</option>
+                                        <option>Scholastic Delinquency</option>
+                                    </select>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-warning" onclick=""><b>Go</b></button>
                                     </span>
                                 </div>
                             </div>
@@ -257,14 +270,13 @@ desired effect
                                             <span class="input-group-btn">
                                                 <button class="btn btn-warning" onclick="dateAdviceReports()">Go</button>
                                             </span>
-                                            <span class="input-group-btn" >
+                                            <span class="input-group-btn">
                                                 <button class="btn btn-info" style="margin-left: 20px" onclick="printAdvice()"><b>Print</b></button>
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                             <table class="table table-striped" id="adviceTable">
                                 <tr>
                                     <th>Student No.</th>
@@ -296,7 +308,7 @@ desired effect
                                             <div class="input-group-addon">
                                                 From
                                             </div>
-                                            <input type="date" class="form-control" id="ReportInqFrom"/>
+                                            <input type="date" class="form-control" id="ReportInqFrom" />
                                         </div>
                                     </div>
                                 </div>
@@ -307,11 +319,11 @@ desired effect
                                             <div class="input-group-addon">
                                                 To
                                             </div>
-                                            <input type="date" class="form-control" id="ReportInqTo"/>
+                                            <input type="date" class="form-control" id="ReportInqTo" />
                                             <span class="input-group-btn">
                                                 <button class="btn btn-warning" onclick="dateInquiries()">Go</button>
                                             </span>
-                                            <span class="input-group-btn" >
+                                            <span class="input-group-btn">
                                                 <button class="btn btn-info" style="margin-left: 20px" onclick="printInquire()"><b>Print</b></button>
                                             </span>
                                         </div>
@@ -349,7 +361,7 @@ desired effect
                                             <div class="input-group-addon">
                                                 From
                                             </div>
-                                            <input type="date" class="form-control" id="ReportAnnounFrom"/>
+                                            <input type="date" class="form-control" id="ReportAnnounFrom" />
                                         </div>
                                     </div>
                                 </div>
@@ -360,11 +372,11 @@ desired effect
                                             <div class="input-group-addon">
                                                 To
                                             </div>
-                                            <input type="date" class="form-control" id="ReportAnnounTo"/>
+                                            <input type="date" class="form-control" id="ReportAnnounTo" />
                                             <span class="input-group-btn">
                                                 <button class="btn btn-warning" onclick="dateInquiries()">Go</button>
                                             </span>
-                                            <span class="input-group-btn" >
+                                            <span class="input-group-btn">
                                                 <button class="btn btn-info" style="margin-left: 20px" onclick="printAnnoun()"><b>Print</b></button>
                                             </span>
                                         </div>
@@ -376,6 +388,58 @@ desired effect
                                 <tr>
                                     <th>Subject</th>
                                     <th>Description</th>
+                                    <th>Date</th>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="tab-pane listStudentAdvice" id="tab_5">
+                            <div class="form-group">
+                                <label>Search:</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-search"></i>
+                                    </div>
+                                    <input type="text" class="form-control" id="txtSearchPet" placeholder="Search Subject" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-warning" onclick="searchAnnoun()">Search</button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Search by Date:</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                From
+                                            </div>
+                                            <input type="date" class="form-control" id="ReportPetFrom" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                To
+                                            </div>
+                                            <input type="date" class="form-control" id="ReportPetTo" />
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-warning" onclick="dateInquiries()">Go</button>
+                                            </span>
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-info" style="margin-left: 20px" onclick="printAnnoun()"><b>Print</b></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <table class="table table-striped" id="petTable">
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Status</th>
                                     <th>Date</th>
                                 </tr>
                             </table>
@@ -438,8 +502,10 @@ desired effect
             loadProfile(currentAdminUser);
             loadReportStud();
             loadAdviceReports();
+            loadAdviceSelect();
             loadInquiries();
             loadAnnoun();
+            loadPet();
         }
 
         function loadProfile(adminUsername) {
@@ -473,11 +539,11 @@ desired effect
         }
 
         function loadReportStud() {
-           $.ajax({
+            $.ajax({
                 type: 'POST',
                 url: 'adminReports.aspx/universalQuery',
-               async: false,
-               data: JSON.stringify({ SQL: "select * from tblRptStud inner join tblStud on tblRptStud.studNo = tblStud.studNo WHERE courseCode = '" + currentCourse + "'" }),
+                async: false,
+                data: JSON.stringify({ SQL: "select * from tblRptStud inner join tblStud on tblRptStud.studNo = tblStud.studNo WHERE courseCode = '" + currentCourse + "'" }),
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: function (response) {
@@ -495,14 +561,27 @@ desired effect
 
                     if (XMLrows.length > 0) {
                         var studTable = document.getElementById("studTable");
-                        studTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Date Registered</td></tr>";
+                        studTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Year</td><td>Section</td><td>Date Registered</td></tr>";
 
                         for (var i = 0; i < XMLrows.length; i++) {
+
+                            //CHECK IF THERE IS SECTION ON THAT STUDENT
+                            var sec = $(XMLrows[i]).find("studSec").html();
+                            if ($(XMLrows[i]).find("studSec").html() == null) {
+                                sec = "No Grade File Uploaded";
+                            }
+
+                            //CHECK IF THERE IS YEAR ON THAT STUDENT
+                            var yr = $(XMLrows[i]).find("studYear").html();
+                            if ($(XMLrows[i]).find("studYear").html() == null) {
+                                yr = "No Grade File Uploaded";
+                            }
+
                             var row = studTable.insertRow(-1);
                             currDate = new Date($(XMLrows[i]).find("timestamp").html());
                             currDate = (currDate.getMonth() + 1) + '/' + currDate.getDate() + '/' + currDate.getFullYear();
 
-                            row.innerHTML += "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + currDate + "</td>";
+                            row.innerHTML += "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + yr + "</td><td>" + sec + "</td><td>" + currDate + "</td>";
                         }
                     }
                 },
@@ -537,14 +616,27 @@ desired effect
 
                     if (XMLrows.length > 0) {
                         var studTable = document.getElementById("studTable");
-                        studTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Date Registered</td></tr>";
+                        studTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Year</td><td>Section</td><td>Date Registered</td></tr>";
 
                         for (var i = 0; i < XMLrows.length; i++) {
+
+                            //CHECK IF THERE IS SECTION ON THAT STUDENT
+                            var sec = $(XMLrows[i]).find("studSec").html();
+                            if ($(XMLrows[i]).find("studSec").html() == null) {
+                                sec = "No Grade File Uploaded";
+                            }
+
+                            //CHECK IF THERE IS YEAR ON THAT STUDENT
+                            var yr = $(XMLrows[i]).find("studYear").html();
+                            if ($(XMLrows[i]).find("studYear").html() == null) {
+                                yr = "No Grade File Uploaded";
+                            }
+
                             var row = studTable.insertRow(-1);
                             currDate = new Date($(XMLrows[i]).find("timestamp").html());
                             currDate = (currDate.getMonth() + 1) + '/' + currDate.getDate() + '/' + currDate.getFullYear();
 
-                            row.innerHTML += "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + currDate + "</td>";
+                            row.innerHTML += "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + yr + "</td><td>" + sec + "</td><td>" + currDate + "</td>";
                         }
                     }
                     else {
@@ -584,14 +676,27 @@ desired effect
 
                     if (XMLrows.length > 0) {
                         var studTable = document.getElementById("studTable");
-                        studTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Date Registered</td></tr>";
+                        studTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Year</td><td>Section</td><td>Date Registered</td></tr>";
 
                         for (var i = 0; i < XMLrows.length; i++) {
+
+                            //CHECK IF THERE IS SECTION ON THAT STUDENT
+                            var sec = $(XMLrows[i]).find("studSec").html();
+                            if ($(XMLrows[i]).find("studSec").html() == null) {
+                                sec = "No Grade File Uploaded";
+                            }
+
+                            //CHECK IF THERE IS YEAR ON THAT STUDENT
+                            var yr = $(XMLrows[i]).find("studYear").html();
+                            if ($(XMLrows[i]).find("studYear").html() == null) {
+                                yr = "No Grade File Uploaded";
+                            }
+
                             var row = studTable.insertRow(-1);
                             currDate = new Date($(XMLrows[i]).find("timestamp").html());
                             currDate = (currDate.getMonth() + 1) + '/' + currDate.getDate() + '/' + currDate.getFullYear();
 
-                            row.innerHTML += "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + currDate + "</td>";
+                            row.innerHTML += "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + yr + "</td><td>" + sec + "</td><td>" + currDate + "</td>";
                         }
                     }
                     else {
@@ -627,14 +732,54 @@ desired effect
                     var XMLrows = xmlDoc.getElementsByTagName("Table");
                     if (XMLrows.length > 0) {
                         var adviceTable = document.getElementById("adviceTable");
-                        adviceTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Advice Name</td><td>Date</td></tr>";
+                        adviceTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Advice Name</td><td>Section</td><td>Year</td><td>Date</td></tr>";
                         for (var i = 0; i < XMLrows.length; i++) {
                             var row = adviceTable.insertRow(-1);
-                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + $(XMLrows[i]).find("adviceName").html() + "</td><td>" + $(XMLrows[i]).find("adviceTimeStamp").html() + "</td>";
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + $(XMLrows[i]).find("adviceName").html() + "</td><td>"+$(XMLrows[i]).find("studSec").html()+"</td><td>"+$(XMLrows[i]).find("studYear").html()+"</td><td>" + $(XMLrows[i]).find("adviceTimeStamp").html() + "</td>";
 
                         }
                     }
-                   
+
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function loadAdviceSelect() {
+            var selectAdvice = document.getElementById("selectAdvice");
+            selectAdvice.innerHTML = "<option>All</option>";
+            $.ajax({
+                type: 'POST',
+                url: 'adminReports.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "select distinct adviceName from tblRptAdvice" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    if (XMLrows.length > 0) {
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var opt = document.createElement("option");
+                            opt.innerHTML = $(XMLrows[i]).find("adviceName").html();
+                            selectAdvice.appendChild(opt);
+                        }
+                    }
+                    else {
+                        
+                    }
+
                 },
                 failure: function (response) {
                     alert(response.d);
@@ -665,10 +810,10 @@ desired effect
                     var XMLrows = xmlDoc.getElementsByTagName("Table");
                     if (XMLrows.length > 0) {
                         var adviceTable = document.getElementById("adviceTable");
-                        adviceTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Advice Name</td><td>Date</td></tr>";
+                        adviceTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Advice Name</td><td>Section</td><td>Year</td><td>Date</td></tr>";
                         for (var i = 0; i < XMLrows.length; i++) {
                             var row = adviceTable.insertRow(-1);
-                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + $(XMLrows[i]).find("adviceName").html() + "</td><td>" + $(XMLrows[i]).find("adviceTimeStamp").html() + "</td>";
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + $(XMLrows[i]).find("adviceName").html() + "</td><td>"+$(XMLrows[i]).find("studSec").html()+"</td><td>"+$(XMLrows[i]).find("studYear").html()+"</td><td>" + $(XMLrows[i]).find("adviceTimeStamp").html() + "</td>";
 
                         }
                     }
@@ -676,7 +821,7 @@ desired effect
                         var adviceTable = document.getElementById("adviceTable");
                         adviceTable.innerHTML = "<div class='text-center text-muted'><i class='fa fa-file-o fa-3x'></i><br><br>No Records Found</div>";
                     }
-                   
+
                 },
                 failure: function (response) {
                     alert(response.d);
@@ -708,10 +853,10 @@ desired effect
                     var XMLrows = xmlDoc.getElementsByTagName("Table");
                     if (XMLrows.length > 0) {
                         var adviceTable = document.getElementById("adviceTable");
-                        adviceTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Advice Name</td><td>Date</td></tr>";
+                        adviceTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Advice Name</td><td>Section</td><td>Year</td><td>Date</td></tr>";
                         for (var i = 0; i < XMLrows.length; i++) {
                             var row = adviceTable.insertRow(-1);
-                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + $(XMLrows[i]).find("adviceName").html() + "</td><td>" + $(XMLrows[i]).find("adviceTimeStamp").html() + "</td>";
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + $(XMLrows[i]).find("adviceName").html() + "</td><td>"+$(XMLrows[i]).find("studSec").html()+"</td><td>"+$(XMLrows[i]).find("studYear").html()+"</td><td>" + $(XMLrows[i]).find("adviceTimeStamp").html() + "</td>";
 
                         }
                     }
@@ -719,7 +864,52 @@ desired effect
                         var adviceTable = document.getElementById("adviceTable");
                         adviceTable.innerHTML = "<div class='text-center text-muted'><i class='fa fa-file-o fa-3x'></i><br><br>No Records Found</div>";
                     }
-                   
+
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function selectAdvice(elem) {
+            var SQL = "SELECT * from tblRptAdvice inner join tblstud on tblStud.studNo = tblRptAdvice.studNo WHERE courseCode = '" + currentCourse + "' AND adviceName = '" + elem.value + "'";
+            if (elem.value == 'All') {
+                SQL = "SELECT * from tblRptAdvice inner join tblstud on tblStud.studNo = tblRptAdvice.studNo WHERE courseCode = '" + currentCourse + "'";
+            }
+            $.ajax({
+                type: 'POST',
+                url: 'adminReports.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: SQL }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    if (XMLrows.length > 0) {
+                        var adviceTable = document.getElementById("adviceTable");
+                        adviceTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Advice Name</td><td>Section</td><td>Year</td><td>Date</td></tr>";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var row = adviceTable.insertRow(-1);
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>" + $(XMLrows[i]).find("adviceName").html() + "</td><td>"+$(XMLrows[i]).find("studSec").html()+"</td><td>"+$(XMLrows[i]).find("studYear").html()+"</td><td>" + $(XMLrows[i]).find("adviceTimeStamp").html() + "</td>";
+
+                        }
+                    }
+                    else {
+                        var adviceTable = document.getElementById("adviceTable");
+                        adviceTable.innerHTML = "<div class='text-center text-muted'><i class='fa fa-file-o fa-3x'></i><br><br>No Records Found</div>";
+                    }
+
                 },
                 failure: function (response) {
                     alert(response.d);
@@ -749,14 +939,14 @@ desired effect
                     var XMLrows = xmlDoc.getElementsByTagName("Table");
                     if (XMLrows.length > 0) {
                         var inqTable = document.getElementById("inqTable");
-                        inqTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Notify Date</td></tr>";
+                        inqTable.innerHTML = "<tr><td>Student No.</td><td>Full Name</td><td>Section</td><td>Year</td><td>Notify Date</td></tr>";
                         for (var i = 0; i < XMLrows.length; i++) {
                             var row = inqTable.insertRow(-1);
-                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>"+$(XMLrows[i]).find("studFirst").html()+" " +$(XMLrows[i]).find("studMiddle").html()+ " " + $(XMLrows[i]).find("studLast").html() +  "</td><td>"+$(XMLrows[i]).find("notifDate").html()+"</td>";
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("studNo").html() + "</td><td>" + $(XMLrows[i]).find("studFirst").html() + " " + $(XMLrows[i]).find("studMiddle").html() + " " + $(XMLrows[i]).find("studLast").html() + "</td><td>"+$(XMLrows[i]).find("studSec").html()+"</td><td>"+$(XMLrows[i]).find("studYear").html()+"</td><td>" + $(XMLrows[i]).find("notifDate").html() + "</td>";
 
                         }
                     }
-                   
+
                 },
                 failure: function (response) {
                     alert(response.d);
@@ -798,7 +988,7 @@ desired effect
                         var inqTable = document.getElementById("inqTable");
                         inqTable.innerHTML = "<div class='text-center text-muted'><i class='fa fa-file-o fa-3x'></i><br><br>No Records Found</div>";
                     }
-                   
+
                 },
                 failure: function (response) {
                     alert(response.d);
@@ -841,7 +1031,7 @@ desired effect
                         var inqTable = document.getElementById("inqTable");
                         inqTable.innerHTML = "<div class='text-center text-muted'><i class='fa fa-file-o fa-3x'></i><br><br>No Records Found</div>";
                     }
-                   
+
                 },
                 failure: function (response) {
                     alert(response.d);
@@ -874,11 +1064,11 @@ desired effect
                         announTable.innerHTML = "<tr><td>Subject</td><td>Description</td><td>Timestamp</td></tr>";
                         for (var i = 0; i < XMLrows.length; i++) {
                             var row = announTable.insertRow(-1);
-                            row.innerHTML = "<td>" + $(XMLrows[i]).find("announceSubj").html() + "</td><td>"+$(XMLrows[i]).find("announceDesc").html()+"</td><td>"+$(XMLrows[i]).find("announceDate").html()+"</td>";
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("announceSubj").html() + "</td><td>" + $(XMLrows[i]).find("announceDesc").html() + "</td><td>" + $(XMLrows[i]).find("announceDate").html() + "</td>";
 
                         }
                     }
-                   
+
                 },
                 failure: function (response) {
                     alert(response.d);
@@ -912,7 +1102,7 @@ desired effect
                         announTable.innerHTML = "<tr><td>Subject</td><td>Description</td><td>Timestamp</td></tr>";
                         for (var i = 0; i < XMLrows.length; i++) {
                             var row = announTable.insertRow(-1);
-                            row.innerHTML = "<td>" + $(XMLrows[i]).find("announceSubj").html() + "</td><td>"+$(XMLrows[i]).find("announceDesc").html()+"</td><td>"+$(XMLrows[i]).find("announceDate").html()+"</td>";
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("announceSubj").html() + "</td><td>" + $(XMLrows[i]).find("announceDesc").html() + "</td><td>" + $(XMLrows[i]).find("announceDate").html() + "</td>";
 
                         }
                     }
@@ -920,7 +1110,44 @@ desired effect
                         var announTable = document.getElementById("announTable");
                         announTable.innerHTML = "<div class='text-center text-muted'><i class='fa fa-file-o fa-3x'></i><br><br>No Records Found</div>";
                     }
-                   
+
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+
+        function loadPet() {
+            $.ajax({
+                type: 'POST',
+                url: 'adminReports.aspx/universalQuery',
+                async: false,
+                data: JSON.stringify({ SQL: "select * from tblRptPet inner join tblSubj on tblRptPet.petSubj = tblSubj.subjID where courseCode = '" + currentCourse + "'" }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    var xml = document.createElement("div");
+                    xml.innerHTML = response.d;
+
+                    //XML pareser
+                    var text = response.d;
+                    var parser, xmlDoc;
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(text, "text/xml");
+
+                    //Get Rows From XML
+                    var XMLrows = xmlDoc.getElementsByTagName("Table");
+                    if (XMLrows.length > 0) {
+                        var petTable = document.getElementById("petTable");
+                        petTable.innerHTML = "<tr><td>Subject Name</td><td>Status</td><td>Timestamp</td></tr>";
+                        for (var i = 0; i < XMLrows.length; i++) {
+                            var row = petTable.insertRow(-1);
+                            row.innerHTML = "<td>" + $(XMLrows[i]).find("subjCode").html() + " - "+ $(XMLrows[i]).find("subjName").html() + "</td><td>" + $(XMLrows[i]).find("petStatus").html() + "</td><td>" + $(XMLrows[i]).find("petDate").html() + "</td>";
+
+                        }
+                    }
+
                 },
                 failure: function (response) {
                     alert(response.d);
@@ -936,9 +1163,9 @@ desired effect
             var studTable = document.getElementById("studTable");
 
             if (ReportStudFrom != "" && ReportStudTo != "") {
-                PrintElem(studTable, 'date', ReportStudFrom, ReportStudTo,'Student Registered Archives');
+                PrintElem(studTable, 'date', ReportStudFrom, ReportStudTo, 'Student Registered Archives');
             }
-               PrintElem(studTable,'all',null,null,'Student Registered Archives');
+            PrintElem(studTable, 'all', null, null, 'Student Registered Archives');
         }
 
         function printAdvice() {
@@ -948,9 +1175,9 @@ desired effect
             var adviceTable = document.getElementById("adviceTable");
 
             if (dateReportAdviceFrom != "" && dateReportAdviceTo != "") {
-                PrintElem(studTable, 'date', dateReportAdviceFrom, dateReportAdviceTo,'Advices Archive');
+                PrintElem(studTable, 'date', dateReportAdviceFrom, dateReportAdviceTo, 'Advices Archive');
             }
-               PrintElem(adviceTable,'all',null,null,'Advices Archive');
+            PrintElem(adviceTable, 'all', null, null, 'Advices Archive');
         }
 
         function printInquire() {
@@ -960,7 +1187,7 @@ desired effect
             var inqTable = document.getElementById("inqTable");
 
             if (ReportInqFrom != "" && ReportInqTo != "") {
-                PrintElem(inqTable, 'date', ReportInqFrom, ReportInqFrom,'Students Inquired Archive');
+                PrintElem(inqTable, 'date', ReportInqFrom, ReportInqFrom, 'Students Inquired Archive');
             }
             PrintElem(inqTable, 'all', null, null, 'Students Inquired Archive');
         }
@@ -971,8 +1198,8 @@ desired effect
 
             var announTable = document.getElementById("announTable");
 
-            if (ReportAnnounFrom  != "" && ReportAnnounTo != "") {
-                PrintElem(announTable, 'date', ReportAnnounFrom, ReportAnnounTo,'Announcement Archive');
+            if (ReportAnnounFrom != "" && ReportAnnounTo != "") {
+                PrintElem(announTable, 'date', ReportAnnounFrom, ReportAnnounTo, 'Announcement Archive');
             }
             PrintElem(announTable, 'all', null, null, 'Announcement Archive');
         }
@@ -980,7 +1207,7 @@ desired effect
         function PrintElem(elem, type, from, to, type2) {
             var mywindow = window.open('', 'PRINT', 'height=400,width=600');
 
-            mywindow.document.write("<html><head><title>"+type2+"</title>");
+            mywindow.document.write("<html><head><title>" + type2 + "</title>");
             mywindow.document.write("<style media='print'>" +
                 "p {" +
                 "   font-family: programme_bold;" +
@@ -998,7 +1225,7 @@ desired effect
                 header = "of all time";
             }
             else if (type == 'date') {
-                header = "From: " + from + "  To: "+to;
+                header = "From: " + from + "  To: " + to;
             }
             mywindow.document.write('</head><body ><h3>Student Academic Based Recommender System</h3>');
             mywindow.document.write("<p>" + header + "</p>");

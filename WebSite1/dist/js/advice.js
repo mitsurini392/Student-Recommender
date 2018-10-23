@@ -287,7 +287,8 @@ function countPet(elem, subjID, studNo, courseCode) {
                     });
                     ////////////////////////////////Create A Petition (ONLY IF THERE IS NO PETITION EXISTED)
                     if (createAPetition == true) {
-                        var SQLInsert = "INSERT INTO tblPet VALUES('" + subjID + "','" + courseCode + "','" + getCurrentYearSem()[0] + "','" + getCurrentYearSem()[1] + "','Pending');";
+                        var currDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                        var SQLInsert = "INSERT INTO tblPet VALUES('" + subjID + "','" + courseCode + "','" + getCurrentYearSem()[0] + "','" + getCurrentYearSem()[1] + "','Pending'); INSERT INTO tblRptPet(petSubj,petStatus,petDate,courseCode) VALUES ('" + subjID + "','Pending','" + currDate + "','"+courseCode+"');";
                         $.ajax({
                             type: 'POST',
                             url: 'Advice.aspx/universalQuery',

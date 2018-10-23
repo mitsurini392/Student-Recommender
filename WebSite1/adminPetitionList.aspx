@@ -295,7 +295,7 @@ desired effect
                 type: 'POST',
                 url: 'Advice.aspx/universalQuery',
                 async: false,
-                data: JSON.stringify({ SQL: "SELECT * FROM tblPet WHERE petCourse = '" + courseCode + "'" }),
+                data: JSON.stringify({ SQL: "SELECT * FROM tblPet inner join tblSubj on tblPet.petSubjID = tblSubj.subjID  WHERE petCourse = '" + courseCode + "'" }),
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: function (response) {
@@ -321,14 +321,15 @@ desired effect
                             }
                             else if (XMLrows[i].getElementsByTagName("petApp")[0].innerHTML == "Pending") {
                                 box.className = "small-box bg-orange petitionBox";
-                                box.style.filter = "Brightness(85%)";
+                                box.style.filter = "Brightness(50%)";
                             }
                             else if (XMLrows[i].getElementsByTagName("petApp")[0].innerHTML == "Rejected") {
                                 box.className = "small-box bg-red petitionBox";
                             }
                             box.innerHTML = "<div class='inner'>" +
                                 "<h3>" + countStudentsOnPetition(XMLrows[i].getElementsByTagName("petSubjID")[0].innerHTML) + "</h3>" +
-                                "<p>Subject: " + getEquivSubjCode(XMLrows[i].getElementsByTagName("petSubjID")[0].innerHTML) + "</p>" +
+                                "<p>Subject Code: " + getEquivSubjCode(XMLrows[i].getElementsByTagName("petSubjID")[0].innerHTML) + "</p>" +
+                                "<p>Subject Name: " + $(XMLrows[i]).find('subjName').html() + "</p>" +
                                 "<p>Status: " + XMLrows[i].getElementsByTagName("petApp")[0].innerHTML + "</p>" +
                                 "</div>" +
                                 "<div class='icon'>" +
@@ -439,7 +440,7 @@ desired effect
             var unselectedBox = document.getElementsByClassName("petitionBox");
             //reset color of all boxes
             for (var i = 0; i < unselectedBox.length; i++) {
-                unselectedBox[i].style.filter = "Brightness(85%)";
+                unselectedBox[i].style.filter = "Brightness(50%)";
             }
             //change color
             elem.parentNode.style.filter = "Brightness(100%)";
@@ -555,11 +556,12 @@ desired effect
         }
 
         function setPetitionStatus(type, petSubjID) {
+            var currDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
             $.ajax({
                 type: 'POST',
                 url: 'Advice.aspx/universalQuery',
                 async: false,
-                data: JSON.stringify({ SQL: "UPDATE tblPet SET petApp = '" + type + "' WHERE petSubjID = '" + petSubjID + "'" }),
+                data: JSON.stringify({ SQL: "UPDATE tblPet SET petApp = '" + type + "' WHERE petSubjID = '" + petSubjID + "'; INSERT INTO tblRptPet(petSubj,petStatus,petDate,courseCode) VALUES ('" + petSubjID + "','" + type + "','" + currDate + "','" + currentCourse + "');" }),
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: function (response) {
